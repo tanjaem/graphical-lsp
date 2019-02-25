@@ -13,24 +13,33 @@
  *  
  *   SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ******************************************************************************/
-package com.eclipsesource.glsp.api.provider;
+package com.eclipsesource.glsp.api.jsonrpc;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
-import com.eclipsesource.glsp.api.action.Action;
+import org.eclipse.lsp4j.jsonrpc.services.JsonNotification;
+import org.eclipse.lsp4j.jsonrpc.services.JsonRequest;
+import org.eclipse.sprotty.ServerStatus;
 
-public interface ActionProvider {
+import com.eclipsesource.glsp.api.action.ActionMessage;
+import com.eclipsesource.glsp.api.model.IModelStateProvider;
 
-	Set<Action> getActions();
+public interface IGLSPServer extends IGLSPClientAware,IModelStateProvider {
 
-	public static class NullImpl implements ActionProvider {
-
-		@Override
-		public Set<Action> getActions() {
-			return Collections.emptySet();
-		}
-
+	public interface Provider {
+		IGLSPServer getGraphicalLanguageServer(String clientId);
 	}
 
+	void initialize();
+
+	@JsonNotification("process")
+	void process(ActionMessage message);
+	
+	@JsonRequest("shutdown")
+	CompletableFuture<Object> shutdown();
+	
+	@JsonNotification("exit")
+	void exit();
+	
+	void setStatus(ServerStatus serverStatus);
 }

@@ -13,15 +13,23 @@
  *  
  *   SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ******************************************************************************/
-package com.eclipsesource.glsp.api.handler;
+package com.eclipsesource.glsp.api.provider;
 
-import java.util.Optional;
+
+import java.util.Collections;
+import java.util.Set;
 
 import com.eclipsesource.glsp.api.action.Action;
-import com.eclipsesource.glsp.api.model.ModelState;
+import com.eclipsesource.glsp.api.handler.IActionHandler;
 
-public interface ActionHandler extends Handler<Action> {
+public interface IActionHandlerProvider extends IHandlerProvider<IActionHandler, Action> {
 
-	public Optional<Action> execute(Action action, ModelState modelState);
+	final static class NullImpl implements IActionHandlerProvider {
 
+		@Override
+		public Set<IActionHandler> getHandlers() {
+			return Collections.emptySet();
+		}
+
+	}
 }

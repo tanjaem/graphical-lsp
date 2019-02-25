@@ -17,54 +17,54 @@ package com.eclipsesource.glsp.api.di;
 
 import org.eclipse.sprotty.ILayoutEngine;
 
-import com.eclipsesource.glsp.api.factory.ModelFactory;
-import com.eclipsesource.glsp.api.factory.PopupModelFactory;
-import com.eclipsesource.glsp.api.handler.ActionHandler;
-import com.eclipsesource.glsp.api.handler.OperationHandler;
-import com.eclipsesource.glsp.api.handler.ServerCommandHandler;
-import com.eclipsesource.glsp.api.jsonrpc.GLSPServer;
-import com.eclipsesource.glsp.api.model.ModelElementOpenListener;
-import com.eclipsesource.glsp.api.model.ModelExpansionListener;
-import com.eclipsesource.glsp.api.model.ModelSelectionListener;
-import com.eclipsesource.glsp.api.operations.OperationConfiguration;
-import com.eclipsesource.glsp.api.provider.ActionHandlerProvider;
-import com.eclipsesource.glsp.api.provider.ActionProvider;
-import com.eclipsesource.glsp.api.provider.CommandPaletteActionProvider;
-import com.eclipsesource.glsp.api.provider.ModelTypeConfigurationProvider;
-import com.eclipsesource.glsp.api.provider.OperationHandlerProvider;
-import com.eclipsesource.glsp.api.provider.ServerCommandHandlerProvider;
+import com.eclipsesource.glsp.api.factory.IModelFactory;
+import com.eclipsesource.glsp.api.factory.IPopupModelFactory;
+import com.eclipsesource.glsp.api.handler.IActionHandler;
+import com.eclipsesource.glsp.api.handler.IOperationHandler;
+import com.eclipsesource.glsp.api.handler.IServerCommandHandler;
+import com.eclipsesource.glsp.api.jsonrpc.IGLSPServer;
+import com.eclipsesource.glsp.api.model.IModelElementOpenListener;
+import com.eclipsesource.glsp.api.model.IModelExpansionListener;
+import com.eclipsesource.glsp.api.model.IModelSelectionListener;
+import com.eclipsesource.glsp.api.operations.IOperationConfiguration;
+import com.eclipsesource.glsp.api.provider.IActionHandlerProvider;
+import com.eclipsesource.glsp.api.provider.IActionProvider;
+import com.eclipsesource.glsp.api.provider.ICommandPaletteActionProvider;
+import com.eclipsesource.glsp.api.provider.IModelTypeConfigurationProvider;
+import com.eclipsesource.glsp.api.provider.IOperationHandlerProvider;
+import com.eclipsesource.glsp.api.provider.IServerCommandHandlerProvider;
 import com.google.inject.AbstractModule;
 import com.google.inject.binder.LinkedBindingBuilder;
 import com.google.inject.multibindings.Multibinder;
 
 public abstract class GLSPModule extends AbstractModule {
-	private Multibinder<ActionHandler> actionHandlerBinder;
-	private Multibinder<ServerCommandHandler> serverCommandHandler;
-	private Multibinder<OperationHandler> operationHandler;
+	private Multibinder<IActionHandler> actionHandlerBinder;
+	private Multibinder<IServerCommandHandler> serverCommandHandler;
+	private Multibinder<IOperationHandler> operationHandler;
 
 	@Override
 	protected final void configure() {
-		bind(GLSPServer.class).to(bindGLSPServer());
-		bind(PopupModelFactory.class).to(bindPopupModelFactory());
-		bind(ModelFactory.class).to(bindModelFactory());
-		bind(ModelSelectionListener.class).to(bindModelSelectionListener());
-		bind(ModelExpansionListener.class).to(bindModelExpansionListener());
-		bind(ModelElementOpenListener.class).to(bindModelElementOpenListener());
+		bind(IGLSPServer.class).to(bindGLSPServer());
+		bind(IPopupModelFactory.class).to(bindPopupModelFactory());
+		bind(IModelFactory.class).to(bindModelFactory());
+		bind(IModelSelectionListener.class).to(bindModelSelectionListener());
+		bind(IModelExpansionListener.class).to(bindModelExpansionListener());
+		bind(IModelElementOpenListener.class).to(bindModelElementOpenListener());
 		bind(ILayoutEngine.class).to(bindLayoutEngine());
-		bind(OperationConfiguration.class).to(bindOperationConfiguration());
-		bind(ActionProvider.class).to(bindActionProvider());
-		bind(ActionHandlerProvider.class).to(bindActionHandlerProvider());
-		bind(OperationHandlerProvider.class).to(bindOperatioHandlerProvider());
-		bind(ServerCommandHandlerProvider.class).to(bindServerCommandHandlerProvider());
-		bind(ModelTypeConfigurationProvider.class).to(bindModelTypesConfigurationProvider());
-		bind(CommandPaletteActionProvider.class).to(bindCommandPaletteActionProvider());
+		bind(IOperationConfiguration.class).to(bindOperationConfiguration());
+		bind(IActionProvider.class).to(bindActionProvider());
+		bind(IActionHandlerProvider.class).to(bindActionHandlerProvider());
+		bind(IOperationHandlerProvider.class).to(bindOperatioHandlerProvider());
+		bind(IServerCommandHandlerProvider.class).to(bindServerCommandHandlerProvider());
+		bind(IModelTypeConfigurationProvider.class).to(bindModelTypesConfigurationProvider());
+		bind(ICommandPaletteActionProvider.class).to(bindCommandPaletteActionProvider());
 		configureMultibindings();
 	}
 
 	protected void configureMultibindings() {
-		actionHandlerBinder = Multibinder.newSetBinder(binder(), ActionHandler.class);
-		serverCommandHandler = Multibinder.newSetBinder(binder(), ServerCommandHandler.class);
-		operationHandler = Multibinder.newSetBinder(binder(), OperationHandler.class);
+		actionHandlerBinder = Multibinder.newSetBinder(binder(), IActionHandler.class);
+		serverCommandHandler = Multibinder.newSetBinder(binder(), IServerCommandHandler.class);
+		operationHandler = Multibinder.newSetBinder(binder(), IOperationHandler.class);
 		multiBindActionHandlers();
 		multiBindServerCommandHandlers();
 		multiBindOperationHandlers();
@@ -76,66 +76,66 @@ public abstract class GLSPModule extends AbstractModule {
 
 	protected abstract void multiBindActionHandlers();
 	
-	protected final LinkedBindingBuilder<ActionHandler> bindActionHandler() {
+	protected final LinkedBindingBuilder<IActionHandler> bindActionHandler() {
 		return actionHandlerBinder.addBinding();
 	}
 
-	protected final LinkedBindingBuilder<ServerCommandHandler> bindServerCommandHandler() {
+	protected final LinkedBindingBuilder<IServerCommandHandler> bindServerCommandHandler() {
 		return serverCommandHandler.addBinding();
 	}
 
-	protected final LinkedBindingBuilder<OperationHandler> bindOperationHandler() {
+	protected final LinkedBindingBuilder<IOperationHandler> bindOperationHandler() {
 		return operationHandler.addBinding();
 	}
 
-	protected abstract Class<? extends GLSPServer> bindGLSPServer();
-	protected abstract Class<? extends ModelTypeConfigurationProvider> bindModelTypesConfigurationProvider();
+	protected abstract Class<? extends IGLSPServer> bindGLSPServer();
+	protected abstract Class<? extends IModelTypeConfigurationProvider> bindModelTypesConfigurationProvider();
 	
-	protected Class<? extends CommandPaletteActionProvider> bindCommandPaletteActionProvider() {
-		return CommandPaletteActionProvider.NullImpl.class;
+	protected Class<? extends ICommandPaletteActionProvider> bindCommandPaletteActionProvider() {
+		return ICommandPaletteActionProvider.NullImpl.class;
 	}
 
-	protected Class<? extends ActionProvider> bindActionProvider() {
-		return ActionProvider.NullImpl.class;
+	protected Class<? extends IActionProvider> bindActionProvider() {
+		return IActionProvider.NullImpl.class;
 	}
 
-	protected Class<? extends ActionHandlerProvider> bindActionHandlerProvider() {
-		return ActionHandlerProvider.NullImpl.class;
+	protected Class<? extends IActionHandlerProvider> bindActionHandlerProvider() {
+		return IActionHandlerProvider.NullImpl.class;
 	}
 
-	protected Class<? extends OperationHandlerProvider> bindOperatioHandlerProvider() {
-		return OperationHandlerProvider.NullImpl.class;
+	protected Class<? extends IOperationHandlerProvider> bindOperatioHandlerProvider() {
+		return IOperationHandlerProvider.NullImpl.class;
 	}
 
-	protected Class<? extends ModelExpansionListener> bindModelExpansionListener() {
-		return ModelExpansionListener.NullImpl.class;
+	protected Class<? extends IModelExpansionListener> bindModelExpansionListener() {
+		return IModelExpansionListener.NullImpl.class;
 	}
 
-	protected Class<? extends ModelFactory> bindModelFactory() {
-		return ModelFactory.NullImpl.class;
+	protected Class<? extends IModelFactory> bindModelFactory() {
+		return IModelFactory.NullImpl.class;
 	}
 
-	protected Class<? extends ModelSelectionListener> bindModelSelectionListener() {
-		return ModelSelectionListener.NullImpl.class;
+	protected Class<? extends IModelSelectionListener> bindModelSelectionListener() {
+		return IModelSelectionListener.NullImpl.class;
 	}
 
-	protected Class<? extends ModelElementOpenListener> bindModelElementOpenListener() {
-		return ModelElementOpenListener.NullImpl.class;
+	protected Class<? extends IModelElementOpenListener> bindModelElementOpenListener() {
+		return IModelElementOpenListener.NullImpl.class;
 	}
 
-	protected Class<? extends PopupModelFactory> bindPopupModelFactory() {
-		return PopupModelFactory.NullImpl.class;
+	protected Class<? extends IPopupModelFactory> bindPopupModelFactory() {
+		return IPopupModelFactory.NullImpl.class;
 	}
 
-	protected Class<? extends OperationConfiguration> bindOperationConfiguration() {
-		return OperationConfiguration.NullOperationConfiguration.class;
+	protected Class<? extends IOperationConfiguration> bindOperationConfiguration() {
+		return IOperationConfiguration.NullOperationConfiguration.class;
 	}
 
 	protected Class<? extends ILayoutEngine> bindLayoutEngine() {
 		return ILayoutEngine.NullImpl.class;
 	}
 
-	protected Class<? extends ServerCommandHandlerProvider> bindServerCommandHandlerProvider() {
-		return ServerCommandHandlerProvider.NullImpl.class;
+	protected Class<? extends IServerCommandHandlerProvider> bindServerCommandHandlerProvider() {
+		return IServerCommandHandlerProvider.NullImpl.class;
 	}
 }

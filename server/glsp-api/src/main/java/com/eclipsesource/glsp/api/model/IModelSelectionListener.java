@@ -13,23 +13,26 @@
  *  
  *   SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ******************************************************************************/
-package com.eclipsesource.glsp.api.provider;
+package com.eclipsesource.glsp.api.model;
 
-import java.util.Collections;
-import java.util.Set;
+import com.eclipsesource.glsp.api.action.kind.SelectAction;
+import com.eclipsesource.glsp.api.action.kind.SelectAllAction;
 
-import org.eclipse.sprotty.SModelRoot;
+public interface IModelSelectionListener {
+	void selectionChanged(SelectAction acion);
 
-import com.eclipsesource.glsp.api.types.LabeledAction;
+	void selectionChanged(SelectAllAction action);
 
-@FunctionalInterface
-public interface CommandPaletteActionProvider {
-	Set<LabeledAction> getActions(SModelRoot model, String[] selectedElementsIDs);
-	
-	public static class NullImpl implements CommandPaletteActionProvider {
+	public static class NullImpl implements IModelSelectionListener {
+
 		@Override
-		public Set<LabeledAction> getActions(SModelRoot model, String[] selectedElementsIDs) {
-			return Collections.emptySet();
+		public void selectionChanged(SelectAction action) {
 		}
+
+		@Override
+		public void selectionChanged(SelectAllAction action) {
+		}
+
 	}
+
 }

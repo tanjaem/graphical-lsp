@@ -37,7 +37,7 @@ import com.eclipsesource.glsp.api.provider.OperationHandlerProvider;
 
 public class OperationActionHandler extends AbstractActionHandler {
 	@Inject
-	protected OperationHandlerProvider operationHandlerProvider;
+	protected IOperationHandlerProvider operationHandlerProvider;
 	@Inject
 	protected ModelSubmissionHandler submissionHandler;
 
@@ -49,7 +49,7 @@ public class OperationActionHandler extends AbstractActionHandler {
 	}
 
 	@Override
-	public Optional<Action> execute(Action action, ModelState modelState) {
+	public Optional<Action> execute(Action action, IModelState modelState) {
 		switch (action.getKind()) {
 		case Action.Kind.CREATE_NODE_OPERATION:
 		case Action.Kind.CREATE_CONNECTION_OPERATION:
@@ -62,9 +62,9 @@ public class OperationActionHandler extends AbstractActionHandler {
 		}
 	}
 
-	public Optional<Action> doHandle(AbstractOperationAction action, ModelState modelState) {
+	public Optional<Action> doHandle(AbstractOperationAction action, IModelState modelState) {
 		if (operationHandlerProvider.isHandled(action)) {
-			OperationHandler handler = operationHandlerProvider.getHandler(action).get();
+			IOperationHandler handler = operationHandlerProvider.getHandler(action).get();
 			Optional<SModelRoot> modelRoot = handler.execute(action, modelState);
 			if (modelRoot.isPresent()) {
 				return submissionHandler.submit(modelRoot.get(), true, modelState);

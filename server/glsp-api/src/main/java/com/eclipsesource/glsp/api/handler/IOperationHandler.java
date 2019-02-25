@@ -13,16 +13,28 @@
  *  
  *   SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ******************************************************************************/
-package com.eclipsesource.glsp.api.model;
+package com.eclipsesource.glsp.api.handler;
 
-public interface ModelStateProvider {
-	/**
-	 * Returns the model state for a given clientId. Note that each sprotty diagram
-	 * is counted as an individual client.
-	 * 
-	 * @param clientId clientId/widgetId
-	 * @return the corresponding model state
-	 */
-	ModelState getModelState(String clientId);
+import java.util.Optional;
+
+import org.eclipse.sprotty.SModelRoot;
+
+import com.eclipsesource.glsp.api.action.kind.AbstractOperationAction;
+import com.eclipsesource.glsp.api.model.IModelState;
+
+public interface IOperationHandler extends IHandler<AbstractOperationAction> {
+
+	Optional<SModelRoot> execute(AbstractOperationAction action, IModelState modelState);
+
+	@Override
+	default boolean handles(AbstractOperationAction action) {
+		return Optional.ofNullable(handlesActionType()) //
+				.map(cl -> cl.isInstance(action)) //
+				.orElse(false);
+	}
+
+	default Class<?> handlesActionType() {
+		return null;
+	}
 
 }

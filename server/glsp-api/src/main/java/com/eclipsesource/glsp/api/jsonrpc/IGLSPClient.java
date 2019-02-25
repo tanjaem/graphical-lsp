@@ -15,6 +15,12 @@
  ******************************************************************************/
 package com.eclipsesource.glsp.api.jsonrpc;
 
-public interface GLSPClientAware {
-	void connect(GLSPClient client);
+import org.eclipse.lsp4j.jsonrpc.services.JsonNotification;
+
+import com.eclipsesource.glsp.api.action.ActionMessage;
+
+public interface IGLSPClient {
+
+	@JsonNotification("process")
+	void process(ActionMessage message);
 }

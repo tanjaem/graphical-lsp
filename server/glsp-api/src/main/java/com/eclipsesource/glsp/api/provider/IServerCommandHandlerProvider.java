@@ -13,22 +13,20 @@
  *  
  *   SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ******************************************************************************/
-package com.eclipsesource.glsp.api.factory;
+package com.eclipsesource.glsp.api.provider;
 
-import org.eclipse.sprotty.SModelElement;
-import org.eclipse.sprotty.SModelRoot;
+import java.util.Collections;
+import java.util.Set;
 
-import com.eclipsesource.glsp.api.action.kind.RequestPopupModelAction;
+import com.eclipsesource.glsp.api.handler.IServerCommandHandler;
 
-public interface PopupModelFactory {
-	SModelRoot createPopuModel(SModelElement element, RequestPopupModelAction action);
+public interface IServerCommandHandlerProvider extends IHandlerProvider<IServerCommandHandler, String> {
 
-	public static class NullImpl implements PopupModelFactory {
+	final static class NullImpl implements IServerCommandHandlerProvider {
 
 		@Override
-		public SModelRoot createPopuModel(SModelElement element, RequestPopupModelAction action) {
-			return null;
+		public Set<IServerCommandHandler> getHandlers() {
+			return Collections.emptySet();
 		}
-
 	}
 }

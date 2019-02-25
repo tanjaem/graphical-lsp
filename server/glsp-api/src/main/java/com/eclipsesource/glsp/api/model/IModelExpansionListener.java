@@ -13,25 +13,25 @@
  *  
  *   SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ******************************************************************************/
-package com.eclipsesource.glsp.api.provider;
+package com.eclipsesource.glsp.api.model;
 
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.Set;
+import com.eclipsesource.glsp.api.action.kind.CollapseExpandAction;
+import com.eclipsesource.glsp.api.action.kind.CollapseExpandAllAction;
 
-import com.eclipsesource.glsp.api.handler.Handler;
-
-public interface HandlerProvider<E extends Handler<T>, T> {
+public interface IModelExpansionListener {
+	void expansionChanged(CollapseExpandAction action);
+	void expansionChanged(CollapseExpandAllAction action);
 	
-	Set<E> getHandlers();
+	public static class NullImpl implements IModelExpansionListener{
 
-	default boolean isHandled(T object) {
-		return getHandler(object).isPresent();
+		@Override
+		public void expansionChanged(CollapseExpandAction action) {
+		}
+
+		@Override
+		public void expansionChanged(CollapseExpandAllAction action) {	
+		}
+
+		
 	}
-
-	default Optional<E> getHandler(T object) {
-		return getHandlers().stream().sorted(Comparator.comparing(Handler::getPriority))
-				.filter(ha -> ha.handles(object)).findFirst();
-	}
-
 }

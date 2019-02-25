@@ -13,20 +13,25 @@
  *  
  *   SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ******************************************************************************/
-package com.eclipsesource.glsp.api.handler;
+package com.eclipsesource.glsp.api.provider;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.Comparator;
 import java.util.Optional;
+import java.util.Set;
 
-import com.eclipsesource.glsp.api.action.Action;
-import com.eclipsesource.glsp.api.model.ModelState;
+import com.eclipsesource.glsp.api.handler.IHandler;
 
-public interface ServerCommandHandler extends Handler<String> {
+public interface IHandlerProvider<E extends IHandler<T>, T> {
+	
+	Set<E> getHandlers();
 
-	default public void execute(String commandId, ModelState modelState) {
-		execute(commandId, Collections.emptyMap(), modelState);
+	default boolean isHandled(T object) {
+		return getHandler(object).isPresent();
 	}
 
-	public Optional<Action> execute(String commandId, Map<String, String> options, ModelState modelState);
+	default Optional<E> getHandler(T object) {
+		return getHandlers().stream().sorted(Comparator.comparing(IHandler::getPriority))
+				.filter(ha -> ha.handles(object)).findFirst();
+	}
+
 }

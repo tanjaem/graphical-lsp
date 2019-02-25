@@ -13,20 +13,8 @@
  *  
  *   SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ******************************************************************************/
-package com.eclipsesource.glsp.api.operations;
+package com.eclipsesource.glsp.api.jsonrpc;
 
-import com.eclipsesource.glsp.api.action.kind.RequestOperationsAction;
-
-public interface OperationConfiguration {
-
-	Operation[] getOperations(RequestOperationsAction action);
-
-	final class NullOperationConfiguration implements OperationConfiguration {
-
-		@Override
-		public Operation[] getOperations(RequestOperationsAction action) {
-			return new Operation[0];
-		}
-
-	}
+public interface IGLSPClientAware {
+	void connect(IGLSPClient client);
 }

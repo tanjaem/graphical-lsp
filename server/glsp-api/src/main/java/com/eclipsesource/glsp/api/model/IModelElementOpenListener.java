@@ -15,24 +15,17 @@
  ******************************************************************************/
 package com.eclipsesource.glsp.api.model;
 
-import com.eclipsesource.glsp.api.action.kind.SelectAction;
-import com.eclipsesource.glsp.api.action.kind.SelectAllAction;
+import com.eclipsesource.glsp.api.action.kind.OpenAction;
 
-public interface ModelSelectionListener {
-	void selectionChanged(SelectAction acion);
-
-	void selectionChanged(SelectAllAction action);
-
-	public static class NullImpl implements ModelSelectionListener {
+public interface IModelElementOpenListener {
+	
+	void elementOpened(OpenAction action);
+	
+	public static class NullImpl implements IModelElementOpenListener{
 
 		@Override
-		public void selectionChanged(SelectAction action) {
+		public void elementOpened(OpenAction action) {
 		}
-
-		@Override
-		public void selectionChanged(SelectAllAction action) {
-		}
-
+		
 	}
-
 }

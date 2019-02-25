@@ -15,21 +15,20 @@
  ******************************************************************************/
 package com.eclipsesource.glsp.api.provider;
 
-
 import java.util.Collections;
 import java.util.Set;
 
-import com.eclipsesource.glsp.api.action.Action;
-import com.eclipsesource.glsp.api.handler.ActionHandler;
+import com.eclipsesource.glsp.api.action.kind.AbstractOperationAction;
+import com.eclipsesource.glsp.api.handler.IOperationHandler;
 
-public interface ActionHandlerProvider extends HandlerProvider<ActionHandler, Action> {
+public interface IOperationHandlerProvider extends IHandlerProvider<IOperationHandler, AbstractOperationAction> {
 
-	final static class NullImpl implements ActionHandlerProvider {
+	final static class NullImpl implements IOperationHandlerProvider {
 
 		@Override
-		public Set<ActionHandler> getHandlers() {
+		public Set<IOperationHandler> getHandlers() {
 			return Collections.emptySet();
 		}
-
 	}
+
 }

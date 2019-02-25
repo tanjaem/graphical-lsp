@@ -18,10 +18,10 @@ package com.eclipsesource.glsp.api.action;
 import java.util.Collection;
 import java.util.Optional;
 
-import com.eclipsesource.glsp.api.handler.ActionHandler;
-import com.eclipsesource.glsp.api.model.ModelState;
+import com.eclipsesource.glsp.api.handler.IActionHandler;
+import com.eclipsesource.glsp.api.model.IModelState;
 
-public abstract class AbstractActionHandler implements ActionHandler {
+public abstract class AbstractActionHandler implements IActionHandler {
 
 
 	protected abstract Collection<Action> handleableActionsKinds();
@@ -36,7 +36,7 @@ public abstract class AbstractActionHandler implements ActionHandler {
 	 * Processes and action and returns the response action which should be send to
 	 * the client. If no response to the client is need a NoOpAction is returned
 	 */
-	public abstract Optional<Action> execute(Action action,ModelState modelState);
+	public abstract Optional<Action> execute(Action action,IModelState modelState);
 
 
 

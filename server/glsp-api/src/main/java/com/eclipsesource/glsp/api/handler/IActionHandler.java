@@ -13,25 +13,15 @@
  *  
  *   SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ******************************************************************************/
-package com.eclipsesource.glsp.api.model;
+package com.eclipsesource.glsp.api.handler;
 
-import com.eclipsesource.glsp.api.action.kind.CollapseExpandAction;
-import com.eclipsesource.glsp.api.action.kind.CollapseExpandAllAction;
+import java.util.Optional;
 
-public interface ModelExpansionListener {
-	void expansionChanged(CollapseExpandAction action);
-	void expansionChanged(CollapseExpandAllAction action);
-	
-	public static class NullImpl implements ModelExpansionListener{
+import com.eclipsesource.glsp.api.action.Action;
+import com.eclipsesource.glsp.api.model.IModelState;
 
-		@Override
-		public void expansionChanged(CollapseExpandAction action) {
-		}
+public interface IActionHandler extends IHandler<Action> {
 
-		@Override
-		public void expansionChanged(CollapseExpandAllAction action) {	
-		}
+	public Optional<Action> execute(Action action, IModelState modelState);
 
-		
-	}
 }

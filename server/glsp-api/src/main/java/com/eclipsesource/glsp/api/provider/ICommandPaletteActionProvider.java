@@ -13,33 +13,23 @@
  *  
  *   SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ******************************************************************************/
-package com.eclipsesource.glsp.api.jsonrpc;
+package com.eclipsesource.glsp.api.provider;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.Collections;
+import java.util.Set;
 
-import org.eclipse.lsp4j.jsonrpc.services.JsonNotification;
-import org.eclipse.lsp4j.jsonrpc.services.JsonRequest;
-import org.eclipse.sprotty.ServerStatus;
+import org.eclipse.sprotty.SModelRoot;
 
-import com.eclipsesource.glsp.api.action.ActionMessage;
-import com.eclipsesource.glsp.api.model.ModelStateProvider;
+import com.eclipsesource.glsp.api.types.LabeledAction;
 
-public interface GLSPServer extends GLSPClientAware,ModelStateProvider {
-
-	public interface Provider {
-		GLSPServer getGraphicalLanguageServer(String clientId);
+@FunctionalInterface
+public interface ICommandPaletteActionProvider {
+	Set<LabeledAction> getActions(SModelRoot model, String[] selectedElementsIDs);
+	
+	public static class NullImpl implements ICommandPaletteActionProvider {
+		@Override
+		public Set<LabeledAction> getActions(SModelRoot model, String[] selectedElementsIDs) {
+			return Collections.emptySet();
+		}
 	}
-
-	void initialize();
-
-	@JsonNotification("process")
-	void process(ActionMessage message);
-	
-	@JsonRequest("shutdown")
-	CompletableFuture<Object> shutdown();
-	
-	@JsonNotification("exit")
-	void exit();
-	
-	void setStatus(ServerStatus serverStatus);
 }

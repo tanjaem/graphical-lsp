@@ -26,14 +26,14 @@ import org.eclipse.sprotty.SNode;
 import com.eclipsesource.glsp.api.action.kind.CreateConnectionOperationAction;
 import com.eclipsesource.glsp.api.action.kind.CreateNodeOperationAction;
 import com.eclipsesource.glsp.api.action.kind.DeleteElementOperationAction;
-import com.eclipsesource.glsp.api.provider.CommandPaletteActionProvider;
+import com.eclipsesource.glsp.api.provider.ICommandPaletteActionProvider;
 import com.eclipsesource.glsp.api.types.LabeledAction;
 import com.eclipsesource.glsp.api.utils.SModelIndex;
 import com.eclipsesource.glsp.example.workflow.schema.ModelTypes;
 import com.eclipsesource.glsp.example.workflow.schema.TaskNode;
 import com.google.common.collect.Sets;
 
-public class WorkflowCommandPaletteActionProvider implements CommandPaletteActionProvider {
+public class WorkflowCommandPaletteActionProvider implements ICommandPaletteActionProvider {
 	private static final LabeledAction CREATE_MERGE_NODE = new LabeledAction("Create Merge Node", new CreateNodeOperationAction(ModelTypes.MERGE_NODE, new Point(0, 0), null));
 	private static final LabeledAction CREATE_DECISION_NODE = new LabeledAction("Create Decision Node", new CreateNodeOperationAction(ModelTypes.DECISION_NODE, new Point(0, 0), null));
 	private static final LabeledAction CREATE_MANUAL_TASK = new LabeledAction("Create Manual Task", new CreateNodeOperationAction(ModelTypes.MANUAL_TASK, new Point(0, 0), null));

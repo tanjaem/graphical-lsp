@@ -13,21 +13,22 @@
  *  
  *   SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ******************************************************************************/
-package com.eclipsesource.glsp.api.factory;
+package com.eclipsesource.glsp.api.provider;
 
-import org.eclipse.sprotty.SModelRoot;
+import java.util.Collections;
+import java.util.Set;
 
-import com.eclipsesource.glsp.api.action.kind.RequestModelAction;
+import com.eclipsesource.glsp.api.action.Action;
 
-public interface ModelFactory {
+public interface IActionProvider {
 
-	SModelRoot loadModel(RequestModelAction action);
+	Set<Action> getActions();
 
-	public static class NullImpl implements ModelFactory {
+	public static class NullImpl implements IActionProvider {
 
 		@Override
-		public SModelRoot loadModel(RequestModelAction action) {
-			return null;
+		public Set<Action> getActions() {
+			return Collections.emptySet();
 		}
 
 	}
