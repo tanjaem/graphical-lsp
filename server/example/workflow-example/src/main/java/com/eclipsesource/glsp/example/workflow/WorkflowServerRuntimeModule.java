@@ -66,7 +66,7 @@ public class WorkflowServerRuntimeModule extends ServerModule {
 	public Class<? extends OperationConfiguration> bindOperationConfiguration() {
 		return WorkflowOperationConfiguration.class;
 	}
-	
+
 	@Override
 	protected Class<? extends CommandPaletteActionProvider> bindCommandPaletteActionProvider() {
 		return WorkflowCommandPaletteActionProvider.class;
@@ -89,6 +89,11 @@ public class WorkflowServerRuntimeModule extends ServerModule {
 	@Override
 	protected void multiBindServerCommandHandlers() {
 		bindServerCommandHandler().to(SimulateCommandHandler.class);
+	}
+
+	@Override
+	protected void multiBindModelLoaders() {
+		bindModelLoader().to(WorkflowModelLoader.class);
 	}
 
 }

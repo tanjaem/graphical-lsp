@@ -76,7 +76,6 @@ public abstract class GLSPModule extends AbstractModule {
 
 	protected abstract void multiBindActionHandlers();
 	
-
 	protected final LinkedBindingBuilder<ActionHandler> bindActionHandler() {
 		return actionHandlerBinder.addBinding();
 	}

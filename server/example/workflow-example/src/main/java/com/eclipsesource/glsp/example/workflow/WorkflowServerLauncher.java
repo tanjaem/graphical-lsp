@@ -23,7 +23,7 @@ import org.apache.log4j.BasicConfigurator;
 import com.eclipsesource.glsp.server.ServerLauncher;
 
 
-public class ExampleServerLauncher {
+public class WorkflowServerLauncher {
 
 	public static void main(String[] args) {
 		BasicConfigurator.configure();
