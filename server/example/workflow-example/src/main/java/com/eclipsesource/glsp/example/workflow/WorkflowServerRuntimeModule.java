@@ -16,9 +16,11 @@
 package com.eclipsesource.glsp.example.workflow;
 
 import com.eclipsesource.glsp.api.factory.IPopupModelFactory;
+import com.eclipsesource.glsp.api.language.IGraphicaLanguage;
 import com.eclipsesource.glsp.api.model.IModelElementOpenListener;
 import com.eclipsesource.glsp.api.model.IModelExpansionListener;
 import com.eclipsesource.glsp.api.model.IModelSelectionListener;
+import com.eclipsesource.glsp.api.model.ISaveModelDelegator;
 import com.eclipsesource.glsp.api.operations.IOperationConfiguration;
 import com.eclipsesource.glsp.api.provider.ICommandPaletteActionProvider;
 import com.eclipsesource.glsp.api.provider.IModelTypeConfigurationProvider;
@@ -32,6 +34,8 @@ import com.eclipsesource.glsp.example.workflow.handler.DeleteWorkflowElementHand
 import com.eclipsesource.glsp.example.workflow.handler.ReconnectEdgeHandler;
 import com.eclipsesource.glsp.example.workflow.handler.SimulateCommandHandler;
 import com.eclipsesource.glsp.server.ServerModule;
+import com.eclipsesource.glsp.server.model.JSONSModelLoader;
+import com.eclipsesource.glsp.server.model.JSONSavemodelDelegator;
 import com.eclipsesource.glsp.server.operationhandler.ChangeBoundsOperationHandler;
 import com.eclipsesource.glsp.server.operationhandler.DeleteHandler;
 
@@ -92,8 +96,18 @@ public class WorkflowServerRuntimeModule extends ServerModule {
 	}
 
 	@Override
-	protected void multiBindModelLoaders() {
-		bindModelLoader().to(WorkflowModelLoader.class);
+	protected void multiBindFileExtensionLoader() {
+		bindFileExtensionLoader().to(JSONSModelLoader.class);
+	}
+
+	@Override
+	protected Class<? extends ISaveModelDelegator> bindSaveModelDelegator() {
+		return JSONSavemodelDelegator.class;
+	}
+
+	@Override
+	protected Class<? extends IGraphicaLanguage> bindGraphicalLanguage() {
+		return WorkflowLanguage.class;
 	}
 
 }

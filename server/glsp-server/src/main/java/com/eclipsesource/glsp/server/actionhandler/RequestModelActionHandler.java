@@ -36,13 +36,13 @@ public class RequestModelActionHandler extends AbstractActionHandler {
 	@Inject
 	protected ModelSubmissionHandler submissionHandler;
 
-
 	@Override
-	public Optional<Action> execute(Action action, IModelState modelState) {
+	public Optional<Action> execute(Action action, String clientId) {
 		if (action instanceof RequestModelAction) {
 			RequestModelAction requestAction = (RequestModelAction) action;
 			ParsedModelOptions options = ModelOptions.parse(requestAction.getOptions());
 			SModelRoot model = modelFactory.loadModel(requestAction);
+			IModelState modelState = getModelState(clientId);
 			modelState.setCurrentModel(model);
 			modelState.setOptions(options);
 			return submissionHandler.submit(model, false, modelState);

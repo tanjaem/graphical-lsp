@@ -26,7 +26,6 @@ import com.eclipsesource.glsp.api.action.AbstractActionHandler;
 import com.eclipsesource.glsp.api.action.Action;
 import com.eclipsesource.glsp.api.action.kind.RequestCommandPaletteActions;
 import com.eclipsesource.glsp.api.action.kind.SetCommandPaletteActions;
-import com.eclipsesource.glsp.api.model.IModelState;
 import com.eclipsesource.glsp.api.provider.ICommandPaletteActionProvider;
 import com.eclipsesource.glsp.api.types.LabeledAction;
 import com.google.inject.Inject;
@@ -41,12 +40,13 @@ public class RequestCommandPaletteActionsHandler extends AbstractActionHandler {
 	}
 
 	@Override
-	public Optional<Action> execute(Action action, IModelState modelState) {
+	public Optional<Action> execute(Action action, String clientId) {
 		if (action instanceof RequestCommandPaletteActions) {
 			RequestCommandPaletteActions paletteAction = (RequestCommandPaletteActions) action;
-			SModelRoot root = modelState.getCurrentModel();
+			SModelRoot root = getModelState(clientId).getCurrentModel();
 			String[] selectedElementsIDs = paletteAction.getSelectedElementsIDs();
-			Set<LabeledAction> commandPaletteActions = commandPaletteActionProvider.getActions(root, selectedElementsIDs);
+			Set<LabeledAction> commandPaletteActions = commandPaletteActionProvider.getActions(root,
+					selectedElementsIDs);
 			return Optional.of(new SetCommandPaletteActions(commandPaletteActions));
 		}
 		return Optional.empty();

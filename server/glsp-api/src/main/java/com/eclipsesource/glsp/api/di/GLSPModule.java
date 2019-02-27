@@ -23,9 +23,12 @@ import com.eclipsesource.glsp.api.handler.IActionHandler;
 import com.eclipsesource.glsp.api.handler.IOperationHandler;
 import com.eclipsesource.glsp.api.handler.IServerCommandHandler;
 import com.eclipsesource.glsp.api.jsonrpc.IGLSPServer;
+import com.eclipsesource.glsp.api.language.IGraphicaLanguage;
 import com.eclipsesource.glsp.api.model.IModelElementOpenListener;
 import com.eclipsesource.glsp.api.model.IModelExpansionListener;
 import com.eclipsesource.glsp.api.model.IModelSelectionListener;
+import com.eclipsesource.glsp.api.model.IModelStateProvider;
+import com.eclipsesource.glsp.api.model.ISaveModelDelegator;
 import com.eclipsesource.glsp.api.operations.IOperationConfiguration;
 import com.eclipsesource.glsp.api.provider.IActionHandlerProvider;
 import com.eclipsesource.glsp.api.provider.IActionProvider;
@@ -43,7 +46,7 @@ public abstract class GLSPModule extends AbstractModule {
 	private Multibinder<IOperationHandler> operationHandler;
 
 	@Override
-	protected final void configure() {
+	protected void configure() {
 		bind(IGLSPServer.class).to(bindGLSPServer());
 		bind(IPopupModelFactory.class).to(bindPopupModelFactory());
 		bind(IModelFactory.class).to(bindModelFactory());
@@ -58,6 +61,9 @@ public abstract class GLSPModule extends AbstractModule {
 		bind(IServerCommandHandlerProvider.class).to(bindServerCommandHandlerProvider());
 		bind(IModelTypeConfigurationProvider.class).to(bindModelTypesConfigurationProvider());
 		bind(ICommandPaletteActionProvider.class).to(bindCommandPaletteActionProvider());
+		bind(ISaveModelDelegator.class).to(bindSaveModelDelegator());
+		bind(IModelStateProvider.class).to(bindModelStateProvider()).asEagerSingleton();
+		bind(IGraphicaLanguage.class).to(bindGraphicalLanguage());
 		configureMultibindings();
 	}
 
@@ -75,7 +81,7 @@ public abstract class GLSPModule extends AbstractModule {
 	protected abstract void multiBindServerCommandHandlers();
 
 	protected abstract void multiBindActionHandlers();
-	
+
 	protected final LinkedBindingBuilder<IActionHandler> bindActionHandler() {
 		return actionHandlerBinder.addBinding();
 	}
@@ -89,8 +95,9 @@ public abstract class GLSPModule extends AbstractModule {
 	}
 
 	protected abstract Class<? extends IGLSPServer> bindGLSPServer();
+
 	protected abstract Class<? extends IModelTypeConfigurationProvider> bindModelTypesConfigurationProvider();
-	
+
 	protected Class<? extends ICommandPaletteActionProvider> bindCommandPaletteActionProvider() {
 		return ICommandPaletteActionProvider.NullImpl.class;
 	}
@@ -138,4 +145,13 @@ public abstract class GLSPModule extends AbstractModule {
 	protected Class<? extends IServerCommandHandlerProvider> bindServerCommandHandlerProvider() {
 		return IServerCommandHandlerProvider.NullImpl.class;
 	}
+
+	protected Class<? extends ISaveModelDelegator> bindSaveModelDelegator() {
+		return ISaveModelDelegator.NullImpl.class;
+	}
+
+	protected abstract Class<? extends IModelStateProvider> bindModelStateProvider();
+
+	protected abstract Class<? extends IGraphicaLanguage> bindGraphicalLanguage();
+
 }
