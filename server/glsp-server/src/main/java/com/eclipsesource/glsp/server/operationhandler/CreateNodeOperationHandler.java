@@ -28,6 +28,7 @@ import com.eclipsesource.glsp.api.action.kind.CreateNodeOperationAction;
 import com.eclipsesource.glsp.api.handler.IOperationHandler;
 import com.eclipsesource.glsp.api.model.IModelState;
 import com.eclipsesource.glsp.api.utils.SModelIndex;
+import com.google.inject.internal.util.StackTraceElements.InMemoryStackTraceElement;
 
 public abstract class CreateNodeOperationHandler implements IOperationHandler {
 
@@ -48,12 +49,15 @@ public abstract class CreateNodeOperationHandler implements IOperationHandler {
 		}
 
 		Optional<Point> point = Optional.of(executeAction.getLocation());
-		SModelElement element = createNode(point, index);
-		if (container.getChildren() == null) {
-			container.setChildren(new ArrayList<SModelElement>());
+		SModelElement element = createNode(point, modelState);
+		if (element!=null) {
+			if (container.getChildren() == null) {
+				container.setChildren(new ArrayList<SModelElement>());
+			}
+			container.getChildren().add(element);
+			index.addToIndex(element, container);
 		}
-		container.getChildren().add(element);
-		index.addToIndex(element, container);
+	
 		return Optional.of(modelState.getCurrentModel());
 	}
 
@@ -67,7 +71,7 @@ public abstract class CreateNodeOperationHandler implements IOperationHandler {
 		return id + i;
 	}
 
-	protected abstract SModelElement createNode(Optional<Point> point, SModelIndex index);
+	protected abstract SModelElement createNode(Optional<Point> point, IModelState modelState);
 	
 	protected int getCounter(SModelIndex index, String type, Function<Integer, String> idProvider) {
 		int i = index.getTypeCount(type);

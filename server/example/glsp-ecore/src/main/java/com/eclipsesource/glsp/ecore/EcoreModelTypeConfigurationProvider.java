@@ -51,6 +51,7 @@ public class EcoreModelTypeConfigurationProvider implements IModelTypeConfigurat
 				put("graph",GLSPGraph.class);
 				put("label:heading", SLabel.class);
 				put("label:text", SLabel.class);
+				put("label:prop", SLabel.class);
 				put("comp:comp", SCompartment.class);
 				put("comp:header", SCompartment.class);
 				put("label:icon", SLabel.class);

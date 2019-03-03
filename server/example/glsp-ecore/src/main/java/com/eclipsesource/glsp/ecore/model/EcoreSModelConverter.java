@@ -9,6 +9,7 @@ import static com.eclipsesource.glsp.ecore.util.SModelIdUtils.toReferenceEdgeId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -54,7 +55,7 @@ public class EcoreSModelConverter {
 		reference.getCssClasses().add("ecore-edge");
 		reference.getCssClasses().add("inheritance");
 		reference.setId(toInheritanceEdgeId(baseClass, superClass));
-		reference.setType("edge:inheritance");
+		reference.setType(ModelTypes.PROPERTY_LABEL_TYPE);
 		reference.setSourceId(toClassNodeId(baseClass));
 		reference.setTargetId(toClassNodeId(superClass));
 		return reference;
@@ -63,7 +64,7 @@ public class EcoreSModelConverter {
 	public SLabel createPropertyLabel(EAttribute eAttribute) {
 		SLabel attribute = new SLabel();
 		attribute.setId(toAttributeLabelId(eAttribute));
-		attribute.setType("label:text");
+		attribute.setType(ModelTypes.PROPERTY_LABEL_TYPE);
 		attribute.setText(String.format(" - %s : %s", eAttribute.getName(), eAttribute.getEAttributeType().getName()));
 		return attribute;
 	}
@@ -71,15 +72,14 @@ public class EcoreSModelConverter {
 	public SLabel createEnumLiteralLabel(EEnumLiteral eliteral) {
 		SLabel literal = new SLabel();
 		literal.setId(toLiteralLabelId(eliteral));
-		literal.setType("label:text");
+		literal.setType("label:prop");
 		literal.setText(" - " + eliteral.getLiteral());
 		return literal;
 	}
 
-	public ClassNode createClassNode(EClassifier eClassifier, boolean foreignPackage) {
+	public ClassNode createClassNode(EClassifier eClassifier, boolean foreignPackage, Optional<Point> point) {
 		ClassNode classNode = new ClassNode();
 		classNode.setId(toClassNodeId(eClassifier));
-		classNode.setType("node:class");
 		classNode.setLayout("vbox");
 		classNode.setExpanded(true);
 		classNode.getCssClasses().add("ecore-node");
@@ -88,7 +88,8 @@ public class EcoreSModelConverter {
 		}
 		List<SModelElement> classChildren = new ArrayList<SModelElement>();
 		classNode.setChildren(classChildren);
-		classNode.setPosition(new Point(0, 0));
+		Point location= point.isPresent()?point.get():new Point(0,0);
+		classNode.setPosition(location);
 
 		// header
 		SCompartment header = new SCompartment();

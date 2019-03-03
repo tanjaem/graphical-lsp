@@ -96,7 +96,7 @@ public class EcoreXMIModelLoader implements IFileExtensionLoader<EObject> {
 
 	private void createClassifierNode(EPackage ePackage, Map<String, SModelElement> graphChildren,
 			EClassifier eClassifier, boolean foreignPackage) {
-		ClassNode node = smodelConverter.createClassNode(eClassifier, foreignPackage);
+		ClassNode node = smodelConverter.createClassNode(eClassifier, foreignPackage, Optional.empty());
 		graphChildren.put(node.getId(), node);
 		if (eClassifier instanceof EClass) {
 			// create attributes

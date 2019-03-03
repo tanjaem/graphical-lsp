@@ -23,10 +23,12 @@ import com.eclipsesource.glsp.api.model.IModelElementOpenListener;
 import com.eclipsesource.glsp.api.model.IModelExpansionListener;
 import com.eclipsesource.glsp.api.model.IModelSelectionListener;
 import com.eclipsesource.glsp.api.model.ISaveModelDelegator;
+import com.eclipsesource.glsp.api.operations.IOperationConfiguration;
 import com.eclipsesource.glsp.api.provider.IModelTypeConfigurationProvider;
 import com.eclipsesource.glsp.ecore.diagram.EcoreLayoutEngine;
 import com.eclipsesource.glsp.ecore.model.EcoreJSONSModelLoader;
 import com.eclipsesource.glsp.ecore.model.EcoreXMIModelLoader;
+import com.eclipsesource.glsp.ecore.operationhandler.CreateEClassOperationHandler;
 import com.eclipsesource.glsp.ecore.operationhandler.EcoreDeleteOperationHandler;
 import com.eclipsesource.glsp.server.ServerModule;
 import com.eclipsesource.glsp.server.model.IFileExtensionLoader;
@@ -44,6 +46,7 @@ public class EcoreServerRuntimeModule extends ServerModule {
 		 List<Class<? extends IOperationHandler>> handlers= new ArrayList<>();
 		 handlers.add(ChangeBoundsOperationHandler.class);
 		 handlers.add(EcoreDeleteOperationHandler.class);
+		 handlers.add(CreateEClassOperationHandler.class);
 		 return handlers;
 	}
 
@@ -87,5 +90,12 @@ public class EcoreServerRuntimeModule extends ServerModule {
 	protected Class<? extends ISaveModelDelegator> bindSaveModelDelegator() {
 		return EcoreSaveModelDelegator.class;
 	}
+	
+	@Override
+	public Class<? extends IOperationConfiguration> bindOperationConfiguration() {
+		return EcoreOperationConfiguration.class;
+	}
+	
+	
 
 }

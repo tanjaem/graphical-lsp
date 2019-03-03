@@ -17,6 +17,7 @@ package com.eclipsesource.glsp.example.workflow.handler;
 
 import com.eclipsesource.glsp.api.action.Action;
 import com.eclipsesource.glsp.api.action.kind.CreateNodeOperationAction;
+import com.eclipsesource.glsp.api.model.IModelState;
 import com.eclipsesource.glsp.example.workflow.schema.ModelTypes;
 
 public class CreateAutomatedTaskHandler extends CreateTaskHandler {

@@ -20,8 +20,8 @@ import {
     PolylineEdgeView, PreRenderedElement, PreRenderedView, routingModule, SButton, SCompartment, SCompartmentView, SEdge, selectModule, SGraphView, //
     SLabel, SLabelView, SRoutingHandle, SRoutingHandleView, TYPES, undoRedoModule, updateModule, viewportModule
 } from "sprotty/lib";
-import { ClassNode, EcoreGraph, EdgeWithMultiplicty, Icon, Link } from "./model";
-import { AggregationEdgeView, ArrowEdgeView, ClassNodeView, CompositionEdgeView, IconView, InheritanceEdgeView, LinkView } from "./views";
+import { ClassNode, EcoreGraph, EdgeWithMultiplicty, Icon } from "./model";
+import { AggregationEdgeView, ArrowEdgeView, ClassNodeView, CompositionEdgeView, IconView, InheritanceEdgeView } from "./views";
 
 export default (containerId: string, withSelectionSupport: boolean, needsServerLayout: boolean) => {
     const classDiagramModule = new ContainerModule((bind, unbind, isBound, rebind) => {
@@ -31,6 +31,7 @@ export default (containerId: string, withSelectionSupport: boolean, needsServerL
         configureModelElement(context, 'graph', EcoreGraph, SGraphView);
         configureModelElement(context, 'node:class', ClassNode, ClassNodeView);
         configureModelElement(context, 'label:heading', SLabel, SLabelView);
+        configureModelElement(context, 'label:prop', SLabel, SLabelView);
         configureModelElement(context, 'label:text', SLabel, SLabelView);
         configureModelElement(context, 'comp:comp', SCompartment, SCompartmentView);
         configureModelElement(context, 'comp:header', SCompartment, SCompartmentView);
@@ -46,7 +47,6 @@ export default (containerId: string, withSelectionSupport: boolean, needsServerL
         configureModelElement(context, 'edge:inheritance', SEdge, InheritanceEdgeView)
         configureModelElement(context, 'edge:aggregation', EdgeWithMultiplicty, AggregationEdgeView)
         configureModelElement(context, 'edge:composition', EdgeWithMultiplicty, CompositionEdgeView)
-        configureModelElement(context, 'link', Link, LinkView)
         configureViewerOptions(context, {
             needsClientLayout: true,
             needsServerLayout,

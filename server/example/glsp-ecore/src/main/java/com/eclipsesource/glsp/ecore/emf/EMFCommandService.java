@@ -19,6 +19,8 @@ import java.util.Collection;
 
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.DeleteCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 
@@ -33,6 +35,12 @@ public class EMFCommandService {
 	public void delete(Collection<EObject> toDelete) {
 		EditingDomain editingDomain = resourceManager.getEditingDomain();
 		Command cmd = DeleteCommand.create(editingDomain, toDelete);
+		editingDomain.getCommandStack().execute(cmd);
+	}
+
+	public void add(Object owner, Object feature, Object value) {
+		EditingDomain editingDomain = resourceManager.getEditingDomain();
+		Command cmd = AddCommand.create(editingDomain, owner, feature, value);
 		editingDomain.getCommandStack().execute(cmd);
 	}
 }

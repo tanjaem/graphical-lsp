@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import org.eclipse.sprotty.SEdge;
 
 public class EcoreEdge extends SEdge {
+	public static final String TYPE= "edge:straight";
 	private String multiplicitySource;
 	private String multiplicityTarget;
 
 	public EcoreEdge() {
+		setType(ModelTypes.ECORE_EDGE_TYPE);
 		setCssClasses(new ArrayList<String>());
 	}
 
