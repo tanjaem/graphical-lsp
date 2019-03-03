@@ -15,11 +15,18 @@
  ******************************************************************************/
 package com.eclipsesource.glsp.example.workflow;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import com.eclipsesource.glsp.api.factory.IPopupModelFactory;
+import com.eclipsesource.glsp.api.handler.IOperationHandler;
+import com.eclipsesource.glsp.api.handler.IServerCommandHandler;
 import com.eclipsesource.glsp.api.language.IGraphicaLanguage;
 import com.eclipsesource.glsp.api.model.IModelElementOpenListener;
 import com.eclipsesource.glsp.api.model.IModelExpansionListener;
 import com.eclipsesource.glsp.api.model.IModelSelectionListener;
+import com.eclipsesource.glsp.api.model.IModelStateProvider;
 import com.eclipsesource.glsp.api.model.ISaveModelDelegator;
 import com.eclipsesource.glsp.api.operations.IOperationConfiguration;
 import com.eclipsesource.glsp.api.provider.ICommandPaletteActionProvider;
@@ -30,14 +37,14 @@ import com.eclipsesource.glsp.example.workflow.handler.CreateEdgeHandler;
 import com.eclipsesource.glsp.example.workflow.handler.CreateManualTaskHandler;
 import com.eclipsesource.glsp.example.workflow.handler.CreateMergeNodeHandler;
 import com.eclipsesource.glsp.example.workflow.handler.CreateWeightedEdgeHandler;
-import com.eclipsesource.glsp.example.workflow.handler.DeleteWorkflowElementHandler;
 import com.eclipsesource.glsp.example.workflow.handler.ReconnectEdgeHandler;
 import com.eclipsesource.glsp.example.workflow.handler.SimulateCommandHandler;
 import com.eclipsesource.glsp.server.ServerModule;
+import com.eclipsesource.glsp.server.model.IFileExtensionLoader;
 import com.eclipsesource.glsp.server.model.JSONSModelLoader;
 import com.eclipsesource.glsp.server.model.JSONSavemodelDelegator;
 import com.eclipsesource.glsp.server.operationhandler.ChangeBoundsOperationHandler;
-import com.eclipsesource.glsp.server.operationhandler.DeleteHandler;
+import com.eclipsesource.glsp.server.operationhandler.DeleteElementOperationHandler;
 
 public class WorkflowServerRuntimeModule extends ServerModule {
 
@@ -77,27 +84,28 @@ public class WorkflowServerRuntimeModule extends ServerModule {
 	}
 
 	@Override
-	protected void multiBindOperationHandlers() {
-		bindOperationHandler().to(CreateAutomatedTaskHandler.class);
-		bindOperationHandler().to(CreateManualTaskHandler.class);
-		bindOperationHandler().to(CreateDecisionNodeHandler.class);
-		bindOperationHandler().to(CreateMergeNodeHandler.class);
-		bindOperationHandler().to(CreateWeightedEdgeHandler.class);
-		bindOperationHandler().to(CreateEdgeHandler.class);
-		bindOperationHandler().to(ReconnectEdgeHandler.class);
-		bindOperationHandler().to(DeleteWorkflowElementHandler.class);
-		bindOperationHandler().to(ChangeBoundsOperationHandler.class);
-		bindOperationHandler().to(DeleteHandler.class);
+	protected List<Class<? extends IOperationHandler>> bindOperationsHandlers() {
+		List<Class<? extends IOperationHandler>> handlers = new ArrayList<>();
+		handlers.add(CreateManualTaskHandler.class);
+		handlers.add(CreateAutomatedTaskHandler.class);
+		handlers.add(CreateDecisionNodeHandler.class);
+		handlers.add(CreateMergeNodeHandler.class);
+		handlers.add(CreateWeightedEdgeHandler.class);
+		handlers.add(CreateEdgeHandler.class);
+		handlers.add(DeleteElementOperationHandler.class);
+		handlers.add(ChangeBoundsOperationHandler.class);
+		handlers.add(ReconnectEdgeHandler.class);
+		return handlers;
 	}
 
 	@Override
-	protected void multiBindServerCommandHandlers() {
-		bindServerCommandHandler().to(SimulateCommandHandler.class);
+	protected List<Class<? extends IServerCommandHandler>> bindServerCommandHandlers() {
+		return Arrays.asList(SimulateCommandHandler.class);
 	}
 
 	@Override
-	protected void multiBindFileExtensionLoader() {
-		bindFileExtensionLoader().to(JSONSModelLoader.class);
+	protected List<Class<? extends IFileExtensionLoader<?>>> bindFileExtensionLoaders() {
+		return Arrays.asList(JSONSModelLoader.class);
 	}
 
 	@Override

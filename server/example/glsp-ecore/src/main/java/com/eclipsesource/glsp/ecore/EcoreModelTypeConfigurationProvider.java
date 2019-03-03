@@ -20,7 +20,6 @@ import org.eclipse.sprotty.PreRenderedElement;
 import org.eclipse.sprotty.SButton;
 import org.eclipse.sprotty.SCompartment;
 import org.eclipse.sprotty.SEdge;
-import org.eclipse.sprotty.SGraph;
 import org.eclipse.sprotty.SLabel;
 import org.eclipse.sprotty.SModelElement;
 
@@ -30,6 +29,7 @@ import com.eclipsesource.glsp.api.types.NodeTypeHint;
 import com.eclipsesource.glsp.ecore.model.ClassNode;
 import com.eclipsesource.glsp.ecore.model.EcoreEdge;
 import com.eclipsesource.glsp.ecore.model.Icon;
+import com.eclipsesource.glsp.server.model.GLSPGraph;
 
 public class EcoreModelTypeConfigurationProvider implements IModelTypeConfigurationProvider {
 
@@ -48,7 +48,7 @@ public class EcoreModelTypeConfigurationProvider implements IModelTypeConfigurat
 		return new HashMap<String, Class<? extends SModelElement>>() {
 			private static final long serialVersionUID = 1L;
 			{
-				put("graph", SGraph.class);
+				put("graph",GLSPGraph.class);
 				put("label:heading", SLabel.class);
 				put("label:text", SLabel.class);
 				put("comp:comp", SCompartment.class);

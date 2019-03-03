@@ -13,13 +13,35 @@
  *  
  *   SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ******************************************************************************/
-package com.eclipsesource.glsp.example.workflow.handler;
+package com.eclipsesource.glsp.server.model;
 
-import com.eclipsesource.glsp.api.handler.IOperationHandler;
-import com.eclipsesource.glsp.server.operationhandler.DeleteHandler;
+import java.util.HashMap;
+import java.util.Map;
 
-public class DeleteWorkflowElementHandler extends DeleteHandler implements IOperationHandler {
+import org.eclipse.sprotty.SModelRoot;
 
-	// Nothing special, yet. Just reuse the default implementation
+import com.eclipsesource.glsp.api.model.IModelState;
+import com.eclipsesource.glsp.api.model.IModelStateProvider;
+
+public class ModelStateProvider implements IModelStateProvider {
+
+	private Map<String, IModelState> modelStates;
+
+	public ModelStateProvider() {
+		modelStates = new HashMap<String, IModelState>();
+	}
+
+	@Override
+	public synchronized IModelState getModelState(String clientId) {
+		return this.modelStates.get(clientId);
+	}
+
+	@Override
+	public IModelState registerModel(SModelRoot model, String clientId) {
+		IModelState modelState = new ModelState();
+		modelState.setCurrentModel(model);
+		modelStates.put(clientId, modelState);
+		return modelState;
+	}
 
 }

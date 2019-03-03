@@ -22,13 +22,13 @@ import org.eclipse.sprotty.SEdge;
 import org.eclipse.sprotty.SModelRoot;
 import org.eclipse.sprotty.SNode;
 
-import com.eclipsesource.glsp.api.action.kind.AbstractOperationAction;
+import com.eclipsesource.glsp.api.action.Action;
 import com.eclipsesource.glsp.api.action.kind.ReconnectConnectionOperationAction;
-import com.eclipsesource.glsp.api.handler.OperationHandler;
-import com.eclipsesource.glsp.api.model.ModelState;
+import com.eclipsesource.glsp.api.handler.IOperationHandler;
+import com.eclipsesource.glsp.api.model.IModelState;
 import com.eclipsesource.glsp.api.utils.SModelIndex;
 
-public class ReconnectEdgeHandler implements OperationHandler {
+public class ReconnectEdgeHandler implements IOperationHandler {
 	private static Logger log = Logger.getLogger(ReconnectEdgeHandler.class);
 	
 	@Override
@@ -37,7 +37,7 @@ public class ReconnectEdgeHandler implements OperationHandler {
 	}
 	
 	@Override
-	public Optional<SModelRoot> execute(AbstractOperationAction operationAction, ModelState modelState) {
+	public Optional<SModelRoot> execute(Action operationAction, IModelState modelState) {
 		if(!(operationAction instanceof ReconnectConnectionOperationAction)) {
 			log.warn("Unexpected action " + operationAction);
 			return Optional.empty();

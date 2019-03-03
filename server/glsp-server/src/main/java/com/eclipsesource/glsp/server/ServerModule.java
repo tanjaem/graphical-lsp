@@ -15,8 +15,13 @@
  ******************************************************************************/
 package com.eclipsesource.glsp.server;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import com.eclipsesource.glsp.api.di.GLSPModule;
 import com.eclipsesource.glsp.api.factory.IModelFactory;
+import com.eclipsesource.glsp.api.handler.IActionHandler;
 import com.eclipsesource.glsp.api.jsonrpc.IGLSPServer;
 import com.eclipsesource.glsp.api.model.IModelStateProvider;
 import com.eclipsesource.glsp.api.provider.IActionHandlerProvider;
@@ -38,6 +43,8 @@ import com.eclipsesource.glsp.server.actionhandler.SaveModelActionHandler;
 import com.eclipsesource.glsp.server.actionhandler.SelectActionHandler;
 import com.eclipsesource.glsp.server.model.FileBasedModelFactory;
 import com.eclipsesource.glsp.server.model.IFileExtensionLoader;
+import com.eclipsesource.glsp.server.model.ModelState;
+import com.eclipsesource.glsp.server.model.ModelStateProvider;
 import com.eclipsesource.glsp.server.provider.DefaultActionHandlerProvider;
 import com.eclipsesource.glsp.server.provider.DefaultActionProvider;
 import com.eclipsesource.glsp.server.provider.DefaultOperationHandlerProvider;
@@ -48,14 +55,13 @@ import com.google.inject.multibindings.Multibinder;
 
 public abstract class ServerModule extends GLSPModule {
 	private Multibinder<IFileExtensionLoader<?>> modelExtensionHandler;
-	private Multibinder<String> fileExtension;
 
 	protected final LinkedBindingBuilder<IFileExtensionLoader<?>> bindFileExtensionLoader() {
 		return modelExtensionHandler.addBinding();
 	}
 
-	protected final LinkedBindingBuilder<String> bindFileExtension() {
-		return fileExtension.addBinding();
+	protected List<Class<? extends IFileExtensionLoader<?>>> bindFileExtensionLoaders() {
+		return Collections.emptyList();
 	}
 
 	protected void multiBindFileExtensionLoader() {
@@ -65,12 +71,16 @@ public abstract class ServerModule extends GLSPModule {
 	}
 
 	@Override
+	protected Class<? extends IModelStateProvider> bindModelStateProvider() {
+		return ModelStateProvider.class;
+	}
+
+	@Override
 	protected void configureMultibindings() {
 		super.configureMultibindings();
 		modelExtensionHandler = Multibinder.newSetBinder(binder(), new TypeLiteral<IFileExtensionLoader<?>>() {
 		});
-		multiBindFileExtensionLoader();
-		multiBindFileExtensions();
+		bindFileExtensionLoaders().forEach(l -> bindFileExtensionLoader().to(l));
 	}
 
 	@Override
@@ -100,14 +110,6 @@ public abstract class ServerModule extends GLSPModule {
 	}
 
 	@Override
-	protected void multiBindOperationHandlers() {
-	}
-
-	@Override
-	protected void multiBindServerCommandHandlers() {
-	}
-
-	@Override
 	protected Class<? extends IModelFactory> bindModelFactory() {
 		return FileBasedModelFactory.class;
 	}
@@ -118,24 +120,21 @@ public abstract class ServerModule extends GLSPModule {
 	}
 
 	@Override
-	protected Class<? extends IModelStateProvider> bindModelStateProvider() {
-		return GLSPServer.class;
-	}
-
-	@Override
-	protected void multiBindActionHandlers() {
-		bindActionHandler().to(CollapseExpandActionHandler.class);
-		bindActionHandler().to(ComputedBoundsActionHandler.class);
-		bindActionHandler().to(OpenActionHandler.class);
-		bindActionHandler().to(OperationActionHandler.class);
-		bindActionHandler().to(RequestModelActionHandler.class);
-		bindActionHandler().to(RequestOperationsHandler.class);
-		bindActionHandler().to(RequestPopupModelActionHandler.class);
-		bindActionHandler().to(SaveModelActionHandler.class);
-		bindActionHandler().to(SelectActionHandler.class);
-		bindActionHandler().to(ExecuteServerCommandActionHandler.class);
-		bindActionHandler().to(RequestElementTypeHintsActionHandler.class);
-		bindActionHandler().to(RequestCommandPaletteActionsHandler.class);
+	protected List<Class<? extends IActionHandler>> bindActionHandlers() {
+		List<Class<? extends IActionHandler>> handlers = new ArrayList<>();
+		handlers.add(CollapseExpandActionHandler.class);
+		handlers.add(ComputedBoundsActionHandler.class);
+		handlers.add(OpenActionHandler.class);
+		handlers.add(OperationActionHandler.class);
+		handlers.add(RequestModelActionHandler.class);
+		handlers.add(RequestOperationsHandler.class);
+		handlers.add(RequestPopupModelActionHandler.class);
+		handlers.add(SaveModelActionHandler.class);
+		handlers.add(SelectActionHandler.class);
+		handlers.add(ExecuteServerCommandActionHandler.class);
+		handlers.add(RequestElementTypeHintsActionHandler.class);
+		handlers.add(RequestCommandPaletteActionsHandler.class);
+		return handlers;
 	}
 
 }

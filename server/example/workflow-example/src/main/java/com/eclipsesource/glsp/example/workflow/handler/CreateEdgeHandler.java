@@ -24,7 +24,7 @@ import org.eclipse.sprotty.SEdge;
 import org.eclipse.sprotty.SModelRoot;
 import org.eclipse.sprotty.SNode;
 
-import com.eclipsesource.glsp.api.action.kind.AbstractOperationAction;
+import com.eclipsesource.glsp.api.action.Action;
 import com.eclipsesource.glsp.api.action.kind.CreateConnectionOperationAction;
 import com.eclipsesource.glsp.api.handler.IOperationHandler;
 import com.eclipsesource.glsp.api.model.IModelState;
@@ -33,7 +33,7 @@ import com.eclipsesource.glsp.example.workflow.schema.ModelTypes;
 public class CreateEdgeHandler implements IOperationHandler {
 	private static Logger log= Logger.getLogger(CreateEdgeHandler.class);
 	@Override
-	public boolean handles(AbstractOperationAction execAction) {
+	public boolean handles(Action execAction) {
 		if (execAction instanceof CreateConnectionOperationAction) {
 			CreateConnectionOperationAction action = (CreateConnectionOperationAction) execAction;
 			return ModelTypes.EDGE.equals(action.getElementTypeId());
@@ -42,7 +42,7 @@ public class CreateEdgeHandler implements IOperationHandler {
 	}
 
 	@Override
-	public Optional<SModelRoot> execute(AbstractOperationAction operationAction, IModelState modelState) {
+	public Optional<SModelRoot> execute(Action operationAction, IModelState modelState) {
 		CreateConnectionOperationAction action = (CreateConnectionOperationAction) operationAction;
 		if (action.getSourceElementId() == null || action.getTargetElementId() == null) {
 			log.warn("Incomplete create connection action");

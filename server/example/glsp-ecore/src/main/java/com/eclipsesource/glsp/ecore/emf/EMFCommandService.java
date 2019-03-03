@@ -13,24 +13,26 @@
  *  
  *   SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ******************************************************************************/
-package com.eclipsesource.glsp.api.action.kind;
+package com.eclipsesource.glsp.ecore.emf;
 
-import com.eclipsesource.glsp.api.action.Action;
+import java.util.Collection;
 
-public abstract class AbstractOperationAction extends Action {
-	
-	private String operationKind;
-	
-	public AbstractOperationAction(String operationKind) {
-		super(operationKind);
+import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.edit.command.DeleteCommand;
+import org.eclipse.emf.edit.domain.EditingDomain;
+
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
+@Singleton
+public class EMFCommandService {
+	@Inject
+	private ResourceManager resourceManager;
+
+	public void delete(Collection<EObject> toDelete) {
+		EditingDomain editingDomain = resourceManager.getEditingDomain();
+		Command cmd = DeleteCommand.create(editingDomain, toDelete);
+		editingDomain.getCommandStack().execute(cmd);
 	}
-
-	public String getOperationKind() {
-		return operationKind;
-	}
-
-	public void setOperationKind(String operationKind) {
-		this.operationKind = operationKind;
-	}
-
 }
