@@ -10,7 +10,7 @@ public class EcoreEdge extends SEdge {
 	private String multiplicityTarget;
 
 	public EcoreEdge() {
-		setType(ModelTypes.ECORE_EDGE_TYPE);
+		setType(ModelTypes.REFERENCE);
 		setCssClasses(new ArrayList<String>());
 	}
 

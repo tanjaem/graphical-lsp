@@ -1,35 +1,15 @@
 package com.eclipsesource.glsp.ecore.emf;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
 import org.eclipse.emf.ecore.EObject;
-
-import com.eclipsesource.glsp.ecore.util.SModelIdUtils;
 
 public class EcoreModelState {
 	private EObject currentModel;
-	private Map<String, EObject> smodelIndex;
+	private EcoreModelIndex index;
 	private boolean dirty;
 
 	public EcoreModelState(EObject currentModel) {
 		this.currentModel = currentModel;
-		createIndex();
-	}
-
-	private void createIndex() {
-		smodelIndex = new HashMap<String, EObject>();
-		currentModel.eAllContents().forEachRemaining(e -> {
-			Optional<String> id = SModelIdUtils.toSModelId(e);
-			if (id.isPresent()) {
-				smodelIndex.put(id.get(), e);
-			}
-		});
-	}
-
-	public Optional<EObject> getById(String semanticId) {
-		return Optional.ofNullable(smodelIndex.get(semanticId));
+		index= new EcoreModelIndex(currentModel);
 	}
 
 	public EObject getCurrentModel() {
@@ -38,6 +18,14 @@ public class EcoreModelState {
 
 	public void setCurrentModel(EObject currentModel) {
 		this.currentModel = currentModel;
+	}
+
+	public EcoreModelIndex getIndex() {
+		return index;
+	}
+
+	public void setIndex(EcoreModelIndex index) {
+		this.index = index;
 	}
 
 	public boolean isDirty() {

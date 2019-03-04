@@ -51,7 +51,7 @@ public class EcoreDeleteOperationHandler extends DeleteElementOperationHandler {
 				List<String> elementIds = action.getElementIds();
 				if (elementIds != null) {
 					List<EObject> toDelete = new ArrayList<>();
-					elementIds.stream().map(id -> ecoreModelState.get().getById(id)).filter(opt -> opt.isPresent())
+					elementIds.stream().map(id -> ecoreModelState.get().getIndex().get(id)).filter(opt -> opt.isPresent())
 							.forEach(opt -> toDelete.add(opt.get()));
 
 					commandService.delete(toDelete);
@@ -63,5 +63,7 @@ public class EcoreDeleteOperationHandler extends DeleteElementOperationHandler {
 
 		return result;
 	}
+	
+	
 
 }

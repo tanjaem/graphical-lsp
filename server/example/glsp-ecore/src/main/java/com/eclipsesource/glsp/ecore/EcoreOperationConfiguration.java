@@ -7,12 +7,16 @@ import com.eclipsesource.glsp.ecore.model.ModelTypes;
 
 public class EcoreOperationConfiguration implements IOperationConfiguration {
 
-
 	@Override
 	public Operation[] getOperations(RequestOperationsAction action) {
-		Operation createAutomatedTask = new Operation("Class", ModelTypes.CLASS_NODE_TYPE, Operation.Kind.CREATE_NODE);
-		
-		Operation[] operations = { createAutomatedTask };
+		Operation createEClass = new Operation("Class", ModelTypes.ECLASS, Operation.Kind.CREATE_NODE);
+		Operation createAbstract = new Operation("Abstract", ModelTypes.ECLASS+ "_Abstract", Operation.Kind.CREATE_NODE);
+		Operation createInterface = new Operation("Interface", ModelTypes.ECLASS + "_Interface",
+				Operation.Kind.CREATE_NODE);
+		Operation createEcoreEdge = new Operation("Reference", ModelTypes.REFERENCE, Operation.Kind.CREATE_CONNECTION);
+		Operation createInheritance = new Operation("Inheritance", ModelTypes.INHERITANCE,
+				Operation.Kind.CREATE_CONNECTION);
+		Operation[] operations = { createEClass,createAbstract,createInterface, createEcoreEdge, createInheritance };
 		return operations;
 	}
 

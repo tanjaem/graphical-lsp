@@ -30,6 +30,7 @@ import com.eclipsesource.glsp.api.language.IGraphicaLanguage;
 import com.eclipsesource.glsp.api.model.IModelElementOpenListener;
 import com.eclipsesource.glsp.api.model.IModelExpansionListener;
 import com.eclipsesource.glsp.api.model.IModelSelectionListener;
+import com.eclipsesource.glsp.api.model.IModelState;
 import com.eclipsesource.glsp.api.model.IModelStateProvider;
 import com.eclipsesource.glsp.api.model.ISaveModelDelegator;
 import com.eclipsesource.glsp.api.operations.IOperationConfiguration;
@@ -40,6 +41,7 @@ import com.eclipsesource.glsp.api.provider.IModelTypeConfigurationProvider;
 import com.eclipsesource.glsp.api.provider.IOperationHandlerProvider;
 import com.eclipsesource.glsp.api.provider.IServerCommandHandlerProvider;
 import com.google.inject.AbstractModule;
+import com.google.inject.TypeLiteral;
 import com.google.inject.binder.LinkedBindingBuilder;
 import com.google.inject.multibindings.Multibinder;
 

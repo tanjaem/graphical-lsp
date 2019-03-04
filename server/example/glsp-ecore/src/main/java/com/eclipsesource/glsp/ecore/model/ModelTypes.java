@@ -3,9 +3,10 @@ package com.eclipsesource.glsp.ecore.model;
 public final class ModelTypes {
 	private ModelTypes() {
 	}
-	
-	public static final String PROPERTY_LABEL_TYPE="label:prop";
-	public static final String CLASS_NODE_TYPE="node:class";
-	public static final String ECORE_EDGE_TYPE="edge:straight";
-	
+	public static final String REFERENCE="edge:association";
+	public static final String ATTRIBUTE="label:prop:attr";
+	public static final String ECLASS="node:class";
+	public static final String COMPOSITION="edge:composition";
+	public static final String INHERITANCE= "edge:inheritance";
+	public static final String ENUMLITERAL = "label:prop:enum";
 }

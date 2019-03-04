@@ -29,6 +29,8 @@ import com.eclipsesource.glsp.ecore.diagram.EcoreLayoutEngine;
 import com.eclipsesource.glsp.ecore.model.EcoreJSONSModelLoader;
 import com.eclipsesource.glsp.ecore.model.EcoreXMIModelLoader;
 import com.eclipsesource.glsp.ecore.operationhandler.CreateEClassOperationHandler;
+import com.eclipsesource.glsp.ecore.operationhandler.CreateInheritanceHandler;
+import com.eclipsesource.glsp.ecore.operationhandler.CreateReferenceOperationHandler;
 import com.eclipsesource.glsp.ecore.operationhandler.EcoreDeleteOperationHandler;
 import com.eclipsesource.glsp.server.ServerModule;
 import com.eclipsesource.glsp.server.model.IFileExtensionLoader;
@@ -47,6 +49,8 @@ public class EcoreServerRuntimeModule extends ServerModule {
 		 handlers.add(ChangeBoundsOperationHandler.class);
 		 handlers.add(EcoreDeleteOperationHandler.class);
 		 handlers.add(CreateEClassOperationHandler.class);
+		 handlers.add(CreateReferenceOperationHandler.class);
+		 handlers.add(CreateInheritanceHandler.class);
 		 return handlers;
 	}
 

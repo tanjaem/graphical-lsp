@@ -17,6 +17,8 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.sprotty.EdgePlacement;
+import org.eclipse.sprotty.EdgePlacement.Side;
 import org.eclipse.sprotty.LayoutOptions;
 import org.eclipse.sprotty.Point;
 import org.eclipse.sprotty.SCompartment;
@@ -28,25 +30,33 @@ import com.google.inject.Singleton;
 @Singleton
 public class EcoreSModelConverter {
 
+	private static EdgePlacement centralTop() {
+		EdgePlacement placement= new EdgePlacement();
+		placement.setSide(Side.top);
+		placement.setPosition(0.5d);
+		return placement;
+	}
 	public EcoreEdge createReferenceEdge(EReference eReference) {
-
 		EcoreEdge reference = new EcoreEdge();
 		reference.getCssClasses().add("ecore-edge");
 		reference.setId(toReferenceEdgeId(eReference));
-		String type = eReference.isContainment() ? "composition" : "aggregation";
-		reference.getCssClasses().add(type);
-		reference.setType("edge:" + type);
+		if (eReference.isContainment()) {
+			reference.getCssClasses().add("composition");
+			reference.setType(ModelTypes.COMPOSITION);
+		}
+
 		reference.setSourceId(toClassNodeId(eReference.getEContainingClass()));
 		reference.setTargetId(toClassNodeId(eReference.getEReferenceType()));
 		reference.setMultiplicitySource("0..1");
 		reference.setMultiplicityTarget(String.format("%s..%s", eReference.getLowerBound(),
 				eReference.getUpperBound() == -1 ? "*" : eReference.getUpperBound()));
-
 		SLabel refName = new SLabel();
 		refName.setId(reference.getId() + "_name");
 		refName.setType("label:text");
 		refName.setText(eReference.getName());
+		refName.setEdgePlacement(centralTop());
 		reference.setChildren(new ArrayList<>(Arrays.asList(refName)));
+		
 		return reference;
 	}
 
@@ -55,7 +65,7 @@ public class EcoreSModelConverter {
 		reference.getCssClasses().add("ecore-edge");
 		reference.getCssClasses().add("inheritance");
 		reference.setId(toInheritanceEdgeId(baseClass, superClass));
-		reference.setType(ModelTypes.PROPERTY_LABEL_TYPE);
+		reference.setType(ModelTypes.INHERITANCE);
 		reference.setSourceId(toClassNodeId(baseClass));
 		reference.setTargetId(toClassNodeId(superClass));
 		return reference;
@@ -64,7 +74,7 @@ public class EcoreSModelConverter {
 	public SLabel createPropertyLabel(EAttribute eAttribute) {
 		SLabel attribute = new SLabel();
 		attribute.setId(toAttributeLabelId(eAttribute));
-		attribute.setType(ModelTypes.PROPERTY_LABEL_TYPE);
+		attribute.setType(ModelTypes.ATTRIBUTE);
 		attribute.setText(String.format(" - %s : %s", eAttribute.getName(), eAttribute.getEAttributeType().getName()));
 		return attribute;
 	}
@@ -72,7 +82,7 @@ public class EcoreSModelConverter {
 	public SLabel createEnumLiteralLabel(EEnumLiteral eliteral) {
 		SLabel literal = new SLabel();
 		literal.setId(toLiteralLabelId(eliteral));
-		literal.setType("label:prop");
+		literal.setType(ModelTypes.ENUMLITERAL);
 		literal.setText(" - " + eliteral.getLiteral());
 		return literal;
 	}

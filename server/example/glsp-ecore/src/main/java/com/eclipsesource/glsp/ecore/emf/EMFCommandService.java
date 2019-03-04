@@ -19,11 +19,10 @@ import java.util.Collection;
 
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.DeleteCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
-
+import static com.eclipsesource.glsp.ecore.util.ThreadUtil.runDeferred;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -33,14 +32,19 @@ public class EMFCommandService {
 	private ResourceManager resourceManager;
 
 	public void delete(Collection<EObject> toDelete) {
-		EditingDomain editingDomain = resourceManager.getEditingDomain();
-		Command cmd = DeleteCommand.create(editingDomain, toDelete);
-		editingDomain.getCommandStack().execute(cmd);
+		runDeferred(() -> {
+			EditingDomain editingDomain = resourceManager.getEditingDomain();
+			Command cmd = DeleteCommand.create(editingDomain, toDelete);
+			editingDomain.getCommandStack().execute(cmd);
+		});
 	}
 
 	public void add(Object owner, Object feature, Object value) {
-		EditingDomain editingDomain = resourceManager.getEditingDomain();
-		Command cmd = AddCommand.create(editingDomain, owner, feature, value);
-		editingDomain.getCommandStack().execute(cmd);
+		runDeferred(() -> {
+			EditingDomain editingDomain = resourceManager.getEditingDomain();
+			Command cmd = AddCommand.create(editingDomain, owner, feature, value);
+			editingDomain.getCommandStack().execute(cmd);
+		});
+
 	}
 }

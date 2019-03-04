@@ -15,9 +15,8 @@
  ********************************************************************************/
 import { Container, ContainerModule } from "inversify";
 import {
-    boundsModule, buttonModule, configureModelElement, configureViewerOptions, ConsoleLogger, defaultModule, edgeEditModule, //
-    ExpandButtonView, expandModule, exportModule, fadeModule, hoverModule, HtmlRoot, HtmlRootView, LogLevel, modelSourceModule, moveModule, //
-    PolylineEdgeView, PreRenderedElement, PreRenderedView, routingModule, SButton, SCompartment, SCompartmentView, SEdge, selectModule, SGraphView, //
+    boundsModule, buttonModule, configureModelElement, configureViewerOptions, ConsoleLogger, defaultModule, edgeEditModule, edgeLayoutModule, //
+    ExpandButtonView, expandModule, exportModule, fadeModule, graphModule, hoverModule, HtmlRoot, HtmlRootView, LogLevel, modelSourceModule, moveModule, PreRenderedElement, PreRenderedView, routingModule, SButton, SCompartment, SCompartmentView, SEdge, selectModule, SGraphView, //
     SLabel, SLabelView, SRoutingHandle, SRoutingHandleView, TYPES, undoRedoModule, updateModule, viewportModule
 } from "sprotty/lib";
 import { ClassNode, EcoreGraph, EdgeWithMultiplicty, Icon } from "./model";
@@ -31,13 +30,13 @@ export default (containerId: string, withSelectionSupport: boolean, needsServerL
         configureModelElement(context, 'graph', EcoreGraph, SGraphView);
         configureModelElement(context, 'node:class', ClassNode, ClassNodeView);
         configureModelElement(context, 'label:heading', SLabel, SLabelView);
-        configureModelElement(context, 'label:prop', SLabel, SLabelView);
+        configureModelElement(context, 'label:prop:attr', SLabel, SLabelView);
+        configureModelElement(context, 'label:prop:enum', SLabel, SLabelView);
         configureModelElement(context, 'label:text', SLabel, SLabelView);
         configureModelElement(context, 'comp:comp', SCompartment, SCompartmentView);
         configureModelElement(context, 'comp:header', SCompartment, SCompartmentView);
         configureModelElement(context, 'icon', Icon, IconView);
         configureModelElement(context, 'label:icon', SLabel, SLabelView);
-        configureModelElement(context, 'edge:straight', SEdge, PolylineEdgeView);
         configureModelElement(context, 'html', HtmlRoot, HtmlRootView);
         configureModelElement(context, 'pre-rendered', PreRenderedElement, PreRenderedView);
         configureModelElement(context, 'button:expand', SButton, ExpandButtonView);
@@ -57,7 +56,7 @@ export default (containerId: string, withSelectionSupport: boolean, needsServerL
     const container = new Container();
     const modules = [defaultModule, moveModule, boundsModule, undoRedoModule, modelSourceModule, routingModule,
         updateModule, viewportModule, fadeModule, hoverModule, exportModule, expandModule, buttonModule,
-        edgeEditModule, classDiagramModule]
+        edgeEditModule, edgeLayoutModule, classDiagramModule, graphModule]
     if (withSelectionSupport) {
         modules.push(selectModule)
     }

@@ -7,7 +7,7 @@ import org.eclipse.sprotty.SNode;
 public class ClassNode extends SNode {
 
 	public ClassNode() {
-		setType(ModelTypes.CLASS_NODE_TYPE);
+		setType(ModelTypes.ECLASS);
 		setCssClasses(new ArrayList<String>());
 	}
 

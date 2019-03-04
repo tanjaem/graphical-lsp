@@ -29,6 +29,7 @@ import com.eclipsesource.glsp.api.types.NodeTypeHint;
 import com.eclipsesource.glsp.ecore.model.ClassNode;
 import com.eclipsesource.glsp.ecore.model.EcoreEdge;
 import com.eclipsesource.glsp.ecore.model.Icon;
+import com.eclipsesource.glsp.ecore.model.ModelTypes;
 import com.eclipsesource.glsp.server.model.GLSPGraph;
 
 public class EcoreModelTypeConfigurationProvider implements IModelTypeConfigurationProvider {
@@ -48,10 +49,11 @@ public class EcoreModelTypeConfigurationProvider implements IModelTypeConfigurat
 		return new HashMap<String, Class<? extends SModelElement>>() {
 			private static final long serialVersionUID = 1L;
 			{
-				put("graph",GLSPGraph.class);
+				put("graph", GLSPGraph.class);
 				put("label:heading", SLabel.class);
 				put("label:text", SLabel.class);
-				put("label:prop", SLabel.class);
+				put("label:prop:attr", SLabel.class);
+				put("label:prop:enum", SLabel.class);
 				put("comp:comp", SCompartment.class);
 				put("comp:header", SCompartment.class);
 				put("label:icon", SLabel.class);
@@ -68,11 +70,10 @@ public class EcoreModelTypeConfigurationProvider implements IModelTypeConfigurat
 				put("button:expand", SButton.class);
 
 				// ecore stuff
-				put("node:class", ClassNode.class);
-				put("edge:association", EcoreEdge.class);
-				put("edge:inheritance", SEdge.class);
-				put("edge:aggregation", EcoreEdge.class);
-				put("edge:composition", EcoreEdge.class);
+				put(ModelTypes.ECLASS, ClassNode.class);
+				put(ModelTypes.REFERENCE, EcoreEdge.class);
+				put(ModelTypes.INHERITANCE, SEdge.class);
+				put(ModelTypes.COMPOSITION, EcoreEdge.class);
 			}
 		};
 	}

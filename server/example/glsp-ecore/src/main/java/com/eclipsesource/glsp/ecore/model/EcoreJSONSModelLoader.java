@@ -44,6 +44,8 @@ public class EcoreJSONSModelLoader extends JSONSModelLoader {
 		});
 		return modelRoot;
 	}
+	
+	
 
 }
 //
