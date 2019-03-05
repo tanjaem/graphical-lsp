@@ -22,11 +22,12 @@ import { GLSP_TYPES } from "../../types";
 import { ReconnectConnectionOperationAction } from "../reconnect/action-definitions";
 import { isReconnectHandle, isRoutable, isSourceRoutingHandle, isTargetRoutingHandle } from "../reconnect/model";
 import { SelectionTracker } from "../select/selection-tracker";
-import { feedbackEdgeId } from "../tool-feedback/creation-tool-feedback";
+import { ApplyCursorCSSFeedbackAction, DrawEdgeFeedbackAction, feedbackEdgeId, RemoveEdgeFeedbackAction } from "../tool-feedback/creation-tool-feedback";
+import { CursorCSS } from "../tool-feedback/cursor-css";
 import { IFeedbackActionDispatcher } from "../tool-feedback/feedback-action-dispatcher";
 import {
-    FeedbackEdgeSourceMovingMouseListener, FeedbackEdgeTargetMovingMouseListener, HideEdgeReconnectHandlesFeedbackAction, HideEdgeReconnectToolFeedbackAction, //
-    ShowEdgeReconnectHandlesFeedbackAction, ShowEdgeReconnectSelectSourceFeedbackAction, ShowEdgeReconnectSelectTargetFeedbackAction
+    DrawFeebackEdgeSourceAction, FeedbackEdgeSourceMovingMouseListener, FeedbackEdgeTargetMovingMouseListener, HideEdgeReconnectHandlesFeedbackAction, //
+    ShowEdgeReconnectHandlesFeedbackAction
 } from "../tool-feedback/reconnect-tool-feedback";
 
 @injectable()
@@ -109,10 +110,14 @@ class ReconnectEdgeListener extends SelectionTracker {
     private setReconnectHandleSelected(edge: SRoutableElement, reconnectHandle: SRoutingHandle) {
         if (this.edgeTypeId && this.edgeSourceId && this.edgeTargetId) {
             if (isSourceRoutingHandle(edge, reconnectHandle)) {
-                this.tool.dispatchFeedback([new HideEdgeReconnectHandlesFeedbackAction(), new ShowEdgeReconnectSelectSourceFeedbackAction(this.edgeTypeId, this.edgeTargetId)]);
+                this.tool.dispatchFeedback([new HideEdgeReconnectHandlesFeedbackAction(),
+                new ApplyCursorCSSFeedbackAction(CursorCSS.EDGE_RECONNECT_SOURCE),
+                new DrawFeebackEdgeSourceAction(this.edgeTypeId, this.edgeTargetId)]);
                 this.reconnectMode = "NEW_SOURCE";
             } else if (isTargetRoutingHandle(edge, reconnectHandle)) {
-                this.tool.dispatchFeedback([new HideEdgeReconnectHandlesFeedbackAction(), new ShowEdgeReconnectSelectTargetFeedbackAction(this.edgeTypeId, this.edgeSourceId)]);
+                this.tool.dispatchFeedback([new HideEdgeReconnectHandlesFeedbackAction(),
+                new ApplyCursorCSSFeedbackAction(CursorCSS.EDGE_CREATION_TARGET),
+                new DrawEdgeFeedbackAction(this.edgeTypeId, this.edgeSourceId)]);
                 this.reconnectMode = "NEW_TARGET";
             }
         }
@@ -209,6 +214,6 @@ class ReconnectEdgeListener extends SelectionTracker {
 
     private resetFeedback() {
         this.tool.dispatchFeedback([new HideEdgeReconnectHandlesFeedbackAction()]);
-        this.tool.dispatchFeedback([new HideEdgeReconnectToolFeedbackAction()]);
+        this.tool.dispatchFeedback([new ApplyCursorCSSFeedbackAction(), new RemoveEdgeFeedbackAction()]);
     }
 }

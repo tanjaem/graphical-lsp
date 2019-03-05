@@ -13,37 +13,11 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-@import "../../../node_modules/sprotty/css/sprotty.css";
 
-
-.sprotty-resize-handle {
-    r: 7px;
-    fill: #884;
-    stroke: none;
-    z-index: 1000;
-}
-
-.sprotty-resize-handle.selected {
-    fill: #66a;
-}
-
-.sprotty-resize-handle.mouseover {
-    stroke: #112;
-    stroke-width: 1;
-}
-.node-creation-tool-mode {
-    cursor: copy;
-}
-
-.edge-creation-not-allowed-mode{
-    cursor:  not-allowed
-}
-
-.edge-creation-select-source-mode,
-.edge-reconnect-select-source-mode {
-    cursor: pointer;
-}
-
-.edge-creation-select-target-mode {
-    cursor: crosshair;
+export enum CursorCSS {
+    NODE_CREATION = 'node-creation-tool-mode',
+    EDGE_CREATION_SOURCE = 'edge-creation-select-source-mode',
+    EDGE_CREATION_TARGET = 'edge-creation-select-target-mode',
+    EDGE_RECONNECT_SOURCE = 'edge-reconnect-select-source-mode',
+    EDGE_CREATION_NOT_ALLOWED = 'edge-creation-not-allowed-mode'
 }

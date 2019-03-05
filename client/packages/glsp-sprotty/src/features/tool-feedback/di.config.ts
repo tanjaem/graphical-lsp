@@ -19,16 +19,9 @@ import { configureCommand, configureView, LocationDecorator, MoveCommand, TYPES 
 import { GLSP_TYPES } from "../../types";
 import { SResizeHandle } from "../change-bounds/model";
 import { HideChangeBoundsToolResizeFeedbackCommand, ShowChangeBoundsToolResizeFeedbackCommand } from "./change-bounds-tool-feedback";
-import {
-    FeedbackEdgeEnd, HideEdgeCreationToolFeedbackCommand, HideNodeCreationToolFeedbackCommand, //
-    ShowEdgeCreationSelectSourceFeedbackCommand, ShowEdgeCreationSelectTargetFeedbackCommand, //
-    ShowNodeCreationToolFeedbackCommand
-} from "./creation-tool-feedback";
+import { ApplyCursorCSSFeedbackActionCommand, DrawEdgeFeedbackCommand, FeedbackEdgeEnd, RemoveEdgeFeedbackCommand } from "./creation-tool-feedback";
 import { FeedbackActionDispatcher } from "./feedback-action-dispatcher";
-import {
-    HideEdgeReconnectHandlesFeedbackCommand, HideEdgeReconnectToolFeedbackCommand, // 
-    ShowEdgeReconnectHandlesFeedbackCommand, ShowEdgeReconnectSelectSourceFeedbackCommand
-} from "./reconnect-tool-feedback";
+import { DrawFeebackEdgeSourceCommand, HideEdgeReconnectHandlesFeedbackCommand, ShowEdgeReconnectHandlesFeedbackCommand } from "./reconnect-tool-feedback";
 import { FeedbackEdgeEndView, SResizeHandleView } from "./view";
 
 const toolFeedbackModule = new ContainerModule((bind, _unbind, isBound) => {
@@ -36,11 +29,9 @@ const toolFeedbackModule = new ContainerModule((bind, _unbind, isBound) => {
     bind(GLSP_TYPES.IModelUpdateObserver).toService(GLSP_TYPES.IFeedbackActionDispatcher)
 
     // create node and edge tool feedback
-    configureCommand({ bind, isBound }, ShowNodeCreationToolFeedbackCommand);
-    configureCommand({ bind, isBound }, HideNodeCreationToolFeedbackCommand);
-    configureCommand({ bind, isBound }, ShowEdgeCreationSelectSourceFeedbackCommand);
-    configureCommand({ bind, isBound }, ShowEdgeCreationSelectTargetFeedbackCommand);
-    configureCommand({ bind, isBound }, HideEdgeCreationToolFeedbackCommand);
+    configureCommand({ bind, isBound }, ApplyCursorCSSFeedbackActionCommand);
+    configureCommand({ bind, isBound }, DrawEdgeFeedbackCommand);
+    configureCommand({ bind, isBound }, RemoveEdgeFeedbackCommand);
 
     configureView({ bind, isBound }, FeedbackEdgeEnd.TYPE, FeedbackEdgeEndView)
     // move tool feedback: we use sprotties MoveCommand as client-side visual feedback
@@ -54,8 +45,8 @@ const toolFeedbackModule = new ContainerModule((bind, _unbind, isBound) => {
     // reconnect edge tool feedback
     configureCommand({ bind, isBound }, ShowEdgeReconnectHandlesFeedbackCommand);
     configureCommand({ bind, isBound }, HideEdgeReconnectHandlesFeedbackCommand);
-    configureCommand({ bind, isBound }, ShowEdgeReconnectSelectSourceFeedbackCommand);
-    configureCommand({ bind, isBound }, HideEdgeReconnectToolFeedbackCommand);
+    configureCommand({ bind, isBound }, DrawFeebackEdgeSourceCommand);
+
 
     bind(TYPES.IVNodeDecorator).to(LocationDecorator);
     bind(TYPES.HiddenVNodeDecorator).to(LocationDecorator);
