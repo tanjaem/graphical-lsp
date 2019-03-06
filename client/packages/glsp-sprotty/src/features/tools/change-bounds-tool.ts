@@ -15,12 +15,12 @@
  ********************************************************************************/
 import { inject, injectable } from "inversify";
 import {
-    Action, Bounds, BoundsAware, ElementAndBounds, findParentByFeature, isViewport, KeyTool, MouseTool, Point, //
+    Action, Bounds, BoundsAware, ElementAndBounds, findParent, findParentByFeature, isViewport, KeyTool, MouseTool, Point, //
     SetBoundsAction, SModelElement, SParentElement, Tool
 } from "sprotty/lib";
 import { GLSP_TYPES } from "../../types";
-import { forEachElement, isSelectedBoundsAware } from "../../utils/smodel-util";
-import { isBoundsAwareMoveable, isResizeable, ResizeHandleLocation, SResizeHandle } from "../change-bounds/model";
+import { forEachElement, isMovingAllowed, isSelectedBoundsAware } from "../../utils/smodel-util";
+import { isResizeable, ResizeHandleLocation, SResizeHandle } from "../change-bounds/model";
 import { ChangeBoundsOperationAction } from "../operation/operation-actions";
 import { SelectionTracker } from "../select/selection-tracker";
 import { FeedbackMoveMouseListener, HideChangeBoundsToolResizeFeedbackAction, ShowChangeBoundsToolResizeFeedbackAction } from "../tool-feedback/change-bounds-tool-feedback";
@@ -100,11 +100,11 @@ class ChangeBoundsListener extends SelectionTracker {
                 active = true;
             } else {
                 // check if we have a moveable element (multi-selection allowed)
-                this.tool.dispatchFeedback([new HideChangeBoundsToolResizeFeedbackAction()]);
-                const moveableElement = findParentByFeature(target, isBoundsAwareMoveable);
-                if (moveableElement) {
-                    // only allow one element to have the element resize handles
-                    this.activeResizeElementId = moveableElement.id;
+                const moveableElement = findParent(target, e => isMovingAllowed(e))
+
+                // check if we have a resizeable element (only single-selection)
+                if (this.isSingleSelection()) {
+                    this.activeResizeElementId = this.getSelectedElementIDs().values().next().value;
                     this.tool.dispatchFeedback([new ShowChangeBoundsToolResizeFeedbackAction(this.activeResizeElementId)]);
                 }
                 active = moveableElement !== undefined || this.activeResizeElementId !== undefined;
