@@ -13,20 +13,59 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { injectable } from "inversify";
-import { Action, Command, ICommand, SModelElement, SModelElementSchema, SModelRoot } from "sprotty/lib";
+import { Action } from "sprotty/lib";
+import { EdgeEditConfig } from "../../base/edit-config/edit-config";
+import { EdgeTypeHint } from "./action-definition";
+import { EditConfig } from "../../base/edit-config/edit-config";
+import { FeedbackCommand } from "../tool-feedback/feedback-command";
+import { GLSP_TYPES } from "../../types";
+import { ICommand } from "sprotty/lib";
+import { IEditConfigProvider } from "../../base/edit-config/edit-config";
+import { IFeedbackActionDispatcher } from "../tool-feedback/feedback-action-dispatcher";
+import { NodeEditConfig } from "../../base/edit-config/edit-config";
+import { NodeTypeHint } from "./action-definition";
 import { SelfInitializingActionHandler } from "../../base/diagram-ui-extension/diagram-ui-extension-registry";
-import {
-    EdgeEditConfig, edgeEditConfig, EditConfig, IEditConfigProvider, isEdgeEditConfig, //
-    isNodeEditConfig, NodeEditConfig, nodeEditConfig
-} from "../../base/edit-config/edit-config";
-import { IModelUpdateObserver } from "../../base/model/model-update-observer-registry";
-import { contains } from "../../utils/array-utils";
-import { EdgeTypeHint, isSetTypeHintsAction, NodeTypeHint, SetTypeHintsAction } from "./action-definition";
+import { SetTypeHintsAction } from "./action-definition";
+import { SModelElement } from "sprotty/lib";
+import { SModelElementSchema } from "sprotty/lib";
+import { SModelRoot } from "sprotty/lib";
+import { TYPES } from "sprotty/lib";
 
+import { contains } from "../../utils/array-utils";
+import { edgeEditConfig } from "../../base/edit-config/edit-config";
+import { inject } from "inversify";
+import { injectable } from "inversify";
+import { isEdgeEditConfig } from "../../base/edit-config/edit-config";
+import { isNodeEditConfig } from "../../base/edit-config/edit-config";
+import { isSetTypeHintsAction } from "./action-definition";
+import { nodeEditConfig } from "../../base/edit-config/edit-config";
+
+export class ApplyEditConfigAction implements Action {
+    readonly kind = ApplyEditConfigCommand.KIND
+    constructor(public readonly editConfigs: Map<string, EditConfig>) { }
+}
 
 @injectable()
-export class TypeHintsActionHandler extends SelfInitializingActionHandler implements IModelUpdateObserver, IEditConfigProvider {
+export class ApplyEditConfigCommand extends FeedbackCommand {
+    static KIND = "applyEditConfig";
+    readonly priority = 10;
+    constructor(@inject(TYPES.Action) protected action: ApplyEditConfigAction) {
+        super();
+    }
+    applyFeedback(root: SModelRoot) {
+        root.index.all().forEach(element => {
+            const config = this.action.editConfigs.get(element.type)
+            if (config) {
+                Object.assign(element, config);
+            }
+        })
+    }
+}
+
+@injectable()
+export class TypeHintsEditConfigProvider extends SelfInitializingActionHandler implements IEditConfigProvider {
+    @inject(GLSP_TYPES.IFeedbackActionDispatcher) protected feedbackActionDispatcher: IFeedbackActionDispatcher
+
     protected editConfigs: Map<string, EditConfig> = new Map
     readonly handledActionKinds = [SetTypeHintsAction.KIND]
 
@@ -34,28 +73,8 @@ export class TypeHintsActionHandler extends SelfInitializingActionHandler implem
         if (isSetTypeHintsAction(action)) {
             action.nodeHints.forEach(hint => this.editConfigs.set(hint.elementTypeId, createNodeEditConfig(hint)))
             action.edgeHints.forEach(hint => this.editConfigs.set(hint.elementTypeId, createEdgeEditConfig(hint)))
-            return <Command>{
-                undo: (context) => { return context.root },
-                redo: (context) => { return context.root },
-                execute: (context) => {
-                    this.applyConfig(context.root)
-                    return context.root
-                }
-            }
+            this.feedbackActionDispatcher.registerFeedback(this, [new ApplyEditConfigAction(this.editConfigs)]);
         }
-    }
-
-    beforeServerUpdate(model: SModelRoot) {
-        this.applyConfig(model)
-    }
-
-    applyConfig(model: SModelRoot) {
-        model.index.all().forEach(element => {
-            const config = this.editConfigs.get(element.type)
-            if (config) {
-                Object.keys(config).forEach(key => (<any>element)[key] = (<any>config)[key])
-            }
-        })
     }
 
     getEditConfig(input: SModelElement | SModelElementSchema | string): EditConfig | undefined {

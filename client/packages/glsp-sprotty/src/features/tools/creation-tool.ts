@@ -71,7 +71,7 @@ export class NodeCreationTool implements Tool, TypeAware {
     };
 
     enable() {
-        this.creationToolMouseListener = new NodeCreationToolMouseListener(this.elementTypeId, this.feedbackDispatcher);
+        this.creationToolMouseListener = new NodeCreationToolMouseListener(this.elementTypeId, this);
         this.mouseTool.register(this.creationToolMouseListener);
         this.feedbackDispatcher.registerFeedback(this, [new ApplyCursorCSSFeedbackAction(CursorCSS.NODE_CREATION)])
     }
@@ -80,13 +80,17 @@ export class NodeCreationTool implements Tool, TypeAware {
         this.mouseTool.deregister(this.creationToolMouseListener);
         this.feedbackDispatcher.deregisterFeedback(this, [new ApplyCursorCSSFeedbackAction()])
     }
+
+    dispatchFeedback(actions: Action[]) {
+        this.feedbackDispatcher.registerFeedback(this, actions);
+    }
 }
 
 @injectable()
 export class NodeCreationToolMouseListener extends DragAwareMouseListener {
     private currentContainer?: SModelElement;
     private creationAllowed: boolean = false;
-    constructor(protected elementTypeId: string, protected feedbackDispatcher: IFeedbackActionDispatcher) {
+    constructor(protected elementTypeId: string, protected tool: NodeCreationTool) {
         super();
     }
 
@@ -104,6 +108,7 @@ export class NodeCreationToolMouseListener extends DragAwareMouseListener {
     }
 
     mouseOver(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
+        const empty: Action[] = [];
         const currentTarget = findParent(target, e => e instanceof SParentElement);
         if (currentTarget !== this.currentContainer) {
             this.currentContainer = currentTarget as SModelElement;
@@ -114,10 +119,11 @@ export class NodeCreationToolMouseListener extends DragAwareMouseListener {
                     this.currentContainer instanceof SModelRoot;
 
                 if (this.creationAllowed) {
-                    return [new ApplyCursorCSSFeedbackAction(CursorCSS.NODE_CREATION)];
+                    this.tool.dispatchFeedback([new ApplyCursorCSSFeedbackAction(CursorCSS.NODE_CREATION)]);
+                    return empty;
                 }
             }
-            return [new ApplyCursorCSSFeedbackAction(CursorCSS.OPERATION_NOT_ALLOWED)];
+            this.tool.dispatchFeedback([new ApplyCursorCSSFeedbackAction(CursorCSS.OPERATION_NOT_ALLOWED)]);
         }
         return [];
     }
@@ -219,10 +225,11 @@ export class EdgeCreationToolMouseListener extends DragAwareMouseListener {
                 if (this.allowedTarget) {
                     const action = this.source === undefined ? new ApplyCursorCSSFeedbackAction(CursorCSS.EDGE_CREATION_SOURCE) :
                         new ApplyCursorCSSFeedbackAction(CursorCSS.EDGE_CREATION_TARGET);
-                    return [action]
+                    this.tool.dispatchFeedback([action]);
+                    return [];
                 }
             }
-            return [new ApplyCursorCSSFeedbackAction(CursorCSS.OPERATION_NOT_ALLOWED)];
+            this.tool.dispatchFeedback([new ApplyCursorCSSFeedbackAction(CursorCSS.OPERATION_NOT_ALLOWED)]);
         }
         return [];
     }

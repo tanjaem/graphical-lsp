@@ -13,18 +13,36 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { inject, injectable } from "inversify";
-import {
-    Action, Bounds, BoundsAware, ElementAndBounds, findParent, findParentByFeature, isViewport, KeyTool, MouseTool, Point, //
-    SetBoundsAction, SModelElement, SParentElement, Tool
-} from "sprotty/lib";
-import { GLSP_TYPES } from "../../types";
-import { forEachElement, isMovingAllowed, isSelectedBoundsAware } from "../../utils/smodel-util";
-import { isResizeable, ResizeHandleLocation, SResizeHandle } from "../change-bounds/model";
+import { Action } from "sprotty/lib";
+import { Bounds } from "sprotty/lib";
+import { BoundsAware } from "sprotty/lib";
 import { ChangeBoundsOperationAction } from "../operation/operation-actions";
-import { SelectionTracker } from "../select/selection-tracker";
-import { FeedbackMoveMouseListener, HideChangeBoundsToolResizeFeedbackAction, ShowChangeBoundsToolResizeFeedbackAction } from "../tool-feedback/change-bounds-tool-feedback";
+import { ElementAndBounds } from "sprotty/lib";
+import { FeedbackMoveMouseListener } from "../tool-feedback/change-bounds-tool-feedback";
+import { GLSP_TYPES } from "../../types";
+import { HideChangeBoundsToolResizeFeedbackAction } from "../tool-feedback/change-bounds-tool-feedback";
 import { IFeedbackActionDispatcher } from "../tool-feedback/feedback-action-dispatcher";
+import { KeyTool } from "sprotty/lib";
+import { MouseTool } from "sprotty/lib";
+import { Point } from "sprotty/lib";
+import { ResizeHandleLocation } from "../change-bounds/model";
+import { SelectionTracker } from "../select/selection-tracker";
+import { SetBoundsAction } from "sprotty/lib";
+import { ShowChangeBoundsToolResizeFeedbackAction } from "../tool-feedback/change-bounds-tool-feedback";
+import { SModelElement } from "sprotty/lib";
+import { SParentElement } from "sprotty/lib";
+import { SResizeHandle } from "../change-bounds/model";
+import { Tool } from "sprotty/lib";
+
+import { findParent } from "sprotty/lib";
+import { findParentByFeature } from "sprotty/lib";
+import { forEachElement } from "../../utils/smodel-util";
+import { inject } from "inversify";
+import { injectable } from "inversify";
+import { isMovingAllowed } from "../../utils/smodel-util";
+import { isResizeable } from "../change-bounds/model";
+import { isSelectedBoundsAware } from "../../utils/smodel-util";
+import { isViewport } from "sprotty/lib";
 
 /**
  * The change bounds tool has the license to move multiple elements or resize a single element by implementing the ChangeBounds operation.
@@ -57,7 +75,7 @@ export class ChangeBoundsTool implements Tool {
         this.feedbackMoveMouseListener = new FeedbackMoveMouseListener();
         this.mouseTool.register(this.feedbackMoveMouseListener);
 
-        // instlal change bounds listener for client-side resize updates and server-side updates
+        // install change bounds listener for client-side resize updates and server-side updates
         this.changeBoundsListener = new ChangeBoundsListener(this);
         this.mouseTool.register(this.changeBoundsListener);
         this.keyTool.register(this.changeBoundsListener);
@@ -100,11 +118,13 @@ class ChangeBoundsListener extends SelectionTracker {
                 active = true;
             } else {
                 // check if we have a moveable element (multi-selection allowed)
+                this.tool.dispatchFeedback([new HideChangeBoundsToolResizeFeedbackAction()]);
                 const moveableElement = findParent(target, e => isMovingAllowed(e))
 
-                // check if we have a resizeable element (only single-selection)
-                if (this.isSingleSelection()) {
-                    this.activeResizeElementId = this.getSelectedElementIDs().values().next().value;
+
+                if (moveableElement) {
+                    // only allow one element to have the element resize handles
+                    this.activeResizeElementId = moveableElement.id;
                     this.tool.dispatchFeedback([new ShowChangeBoundsToolResizeFeedbackAction(this.activeResizeElementId)]);
                 }
                 active = moveableElement !== undefined || this.activeResizeElementId !== undefined;

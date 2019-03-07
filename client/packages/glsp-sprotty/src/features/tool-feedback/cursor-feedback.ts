@@ -14,15 +14,15 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import { Action } from "sprotty/lib";
-import { CommandExecutionContext } from "sprotty/lib";
-import { FeedbackCommand } from "./model";
+import { FeedbackCommand } from "./feedback-command";
 import { SModelRoot } from "sprotty/lib";
 import { TYPES } from "sprotty/lib";
 
-import { applyCssClassesToRoot } from "./model";
+import { addCssClasses } from "../../utils/smodel-util";
 import { inject } from "inversify";
 import { injectable } from "inversify";
-import { unapplyCssClassesToRoot } from "./model";
+import { removeCssClasses } from "../../utils/smodel-util";
+
 
 export enum CursorCSS {
     NODE_CREATION = 'node-creation-mode',
@@ -45,11 +45,10 @@ export class ApplyCursorCSSFeedbackActionCommand extends FeedbackCommand {
     constructor(@inject(TYPES.Action) readonly action: ApplyCursorCSSFeedbackAction) {
         super()
     }
-    execute(context: CommandExecutionContext): SModelRoot {
-        let result = unapplyCssClassesToRoot(context, Object.values(CursorCSS))
+    applyFeedback(root: SModelRoot) {
+        removeCssClasses(root, Object.values(CursorCSS))
         if (this.action.cssClass) {
-            result = applyCssClassesToRoot(context, [this.action.cssClass])
+            addCssClasses(root, [this.action.cssClass])
         }
-        return result;
     }
 }

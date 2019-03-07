@@ -16,8 +16,6 @@
 import { Action } from "sprotty/lib";
 import { IActionDispatcher } from "sprotty/lib";
 import { ILogger } from "sprotty/lib";
-import { IModelUpdateObserver } from "../../base/model/model-update-observer-registry";
-import { SModelRoot } from "sprotty/lib";
 import { TYPES } from "sprotty/lib";
 
 import { inject } from "inversify";
@@ -50,10 +48,14 @@ export interface IFeedbackActionDispatcher {
      * @param actions the actions to be sent out after deregistration.
      */
     deregisterFeedback(feedbackEmitter: IFeedbackEmitter, actions: Action[]): void;
+    /**
+     * Retrieve all currently registered `actions`
+     */
+    getRegisteredFeedback(): Action[]
 }
 
 @injectable()
-export class FeedbackActionDispatcher implements IFeedbackActionDispatcher, IModelUpdateObserver {
+export class FeedbackActionDispatcher implements IFeedbackActionDispatcher {
 
     protected feedbackEmitters: Map<IFeedbackEmitter, Action[]> = new Map;
 
@@ -77,9 +79,10 @@ export class FeedbackActionDispatcher implements IFeedbackActionDispatcher, IMod
             .then(() => this.logger.info(this, `Dispatched feedback actions for ${feedbackEmitter}`))
             .catch(reason => this.logger.error(this, 'Failed to dispatch feedback actions', reason));
     }
-
-    beforeServerUpdate(model: SModelRoot): void {
-        this.feedbackEmitters.forEach((actions, feedbackEmitter) =>
-            this.dispatch(actions, feedbackEmitter));
+    getRegisteredFeedback() {
+        const result: Action[] = [];
+        this.feedbackEmitters.forEach((value, key) => result.push(...value));
+        return result;
     }
 }
+

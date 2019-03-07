@@ -13,8 +13,19 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { BoundsAware, isBoundsAware, isSelectable, Selectable, SModelElement } from "sprotty/lib";
-import { EditConfig, isConfigurableElement, isConfigurableNode } from "../base/edit-config/edit-config";
+import { BoundsAware } from "sprotty/lib";
+import { EdgeEditConfig } from "../base/edit-config/edit-config";
+import { EditConfig } from "../base/edit-config/edit-config";
+import { NodeEditConfig } from "../base/edit-config/edit-config";
+import { Selectable } from "sprotty/lib";
+import { SModelElement } from "sprotty/lib";
+
+import { isBoundsAware } from "sprotty/lib";
+import { isConfigurableEdge } from "../base/edit-config/edit-config";
+import { isConfigurableElement } from "../base/edit-config/edit-config";
+import { isConfigurableNode } from "../base/edit-config/edit-config";
+import { isSelectable } from "sprotty/lib";
+
 
 export function getIndex(element: SModelElement) {
     return element.root.index;
@@ -71,11 +82,13 @@ export function removeCssClasses(root: SModelElement, cssClasses: string[]) {
         }
     }
 }
-
+export function isReconnectingAllowed(element: SModelElement): element is EdgeEditConfig & SModelElement {
+    return isConfigurableEdge(element) && element.repositionable;
+}
 export function isDeletionAllowed(element: SModelElement): element is EditConfig & SModelElement {
     return isConfigurableElement(element) && element.deletable
 }
 
-export function isMovingAllowed(element: SModelElement): element is EditConfig & SModelElement {
+export function isMovingAllowed(element: SModelElement): element is NodeEditConfig & SModelElement {
     return isConfigurableNode(element) && element.repositionable
 }

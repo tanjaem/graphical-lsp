@@ -13,36 +13,43 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { inject, injectable } from "inversify";
+import { Action } from "sprotty/lib";
+import { ElementMove } from "sprotty/lib";
+import { FeedbackCommand } from "./feedback-command";
+import { MouseListener } from "sprotty/lib";
+import { MoveAction } from "sprotty/lib";
+import { Point } from "sprotty/lib";
+import { SModelElement } from "sprotty/lib";
+import { SModelRoot } from "sprotty/lib";
+import { TYPES } from "sprotty/lib";
 import { VNode } from "snabbdom/vnode";
-import {
-    Action, CommandExecutionContext, ElementMove, findParentByFeature, isMoveable, isSelectable, //
-    isViewport, MouseListener, MoveAction, Point, SModelElement, SModelRoot, TYPES
-} from "sprotty/lib";
+
+import { addResizeHandles } from "../change-bounds/model";
+import { findParentByFeature } from "sprotty/lib";
+import { inject } from "inversify";
+import { injectable } from "inversify";
+import { isMoveable } from "sprotty/lib";
 import { isNotUndefined } from "../../utils/smodel-util";
-import { addResizeHandles, isResizeable, removeResizeHandles } from "../change-bounds/model";
-import { FeedbackCommand } from "./model";
+import { isResizeable } from "../change-bounds/model";
+import { isSelectable } from "sprotty/lib";
+import { isViewport } from "sprotty/lib";
+import { removeResizeHandles } from "../change-bounds/model";
 
 export class ShowChangeBoundsToolResizeFeedbackAction implements Action {
-    kind = ShowChangeBoundsToolResizeFeedbackCommand.KIND;
+    kind = ShowChangeBoundsToolResizeFeedbackCommand.KIND
     constructor(readonly elementId?: string) { }
-}
-
-export class HideChangeBoundsToolResizeFeedbackAction implements Action {
-    kind = HideChangeBoundsToolResizeFeedbackCommand.KIND;
-    constructor() { }
 }
 
 @injectable()
 export class ShowChangeBoundsToolResizeFeedbackCommand extends FeedbackCommand {
-    static readonly KIND = 'glsp.changeboundstools.resize.feedback.show';
+    static readonly KIND = 'showChangeBoundsToolResizeFeedback';
 
     constructor(@inject(TYPES.Action) protected action: ShowChangeBoundsToolResizeFeedbackAction) {
         super();
     }
 
-    execute(context: CommandExecutionContext): SModelRoot {
-        const index = context.root.index;
+    applyFeedback(root: SModelElement) {
+        const index = root.index;
         index.all().filter(isResizeable).forEach(removeResizeHandles);
 
         if (isNotUndefined(this.action.elementId)) {
@@ -51,23 +58,23 @@ export class ShowChangeBoundsToolResizeFeedbackCommand extends FeedbackCommand {
                 addResizeHandles(resizeElement);
             }
         }
-
-        return context.root;
     }
+
+}
+export class HideChangeBoundsToolResizeFeedbackAction implements Action {
+    kind = HideChangeBoundsToolResizeFeedbackCommand.KIND;
 }
 
 @injectable()
 export class HideChangeBoundsToolResizeFeedbackCommand extends FeedbackCommand {
-    static readonly KIND = 'glsp.changeboundstools.resize.feedback.hide';
+    static readonly KIND = 'hideChangeBoundsToolResizeFeedback';
 
     constructor(@inject(TYPES.Action) protected action: HideChangeBoundsToolResizeFeedbackAction) {
         super();
     }
 
-    execute(context: CommandExecutionContext): SModelRoot {
-        const index = context.root.index;
-        index.all().filter(isResizeable).forEach(removeResizeHandles);
-        return context.root;
+    applyFeedback(root: SModelElement) {
+        root.index.all().filter(isResizeable).forEach(removeResizeHandles);
     }
 }
 

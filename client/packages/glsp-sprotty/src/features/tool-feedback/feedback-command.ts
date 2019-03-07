@@ -14,12 +14,23 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import { Command, CommandExecutionContext, CommandResult, SModelRoot } from "sprotty/lib";
-import { addCssClasses, removeCssClasses } from "../../utils/smodel-util";
+import { Command } from "sprotty/lib";
+import { CommandExecutionContext } from "sprotty/lib";
+import { CommandResult } from "sprotty/lib";
+import { SModelRoot } from "sprotty/lib";
 
+import { injectable } from "inversify";
+
+
+@injectable()
 export abstract class FeedbackCommand extends Command {
+    readonly priority: number = 0;
+    execute(context: CommandExecutionContext): SModelRoot {
+        this.applyFeedback(context.root);
+        return context.root;
+    }
 
-    abstract execute(context: CommandExecutionContext): SModelRoot;
+    abstract applyFeedback(root: SModelRoot): void
 
     undo(context: CommandExecutionContext): CommandResult {
         return context.root;
@@ -29,16 +40,3 @@ export abstract class FeedbackCommand extends Command {
         return context.root;
     }
 }
-
-export function applyCssClassesToRoot(context: CommandExecutionContext, cssClasses: string[]): SModelRoot {
-    const root = context.root;
-    addCssClasses(root, cssClasses);
-    return root;
-}
-
-export function unapplyCssClassesToRoot(context: CommandExecutionContext, cssClasses: string[]): SModelRoot {
-    const root = context.root;
-    removeCssClasses(root, cssClasses);
-    return root;
-}
-

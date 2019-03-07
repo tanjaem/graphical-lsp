@@ -38,6 +38,9 @@ import { matchesKeystroke } from "sprotty/lib/utils/keyboard";
 
 
 
+
+
+
 /**
  * Deletes selected elements when hitting the `Del` key.
  */
@@ -80,7 +83,7 @@ export class MouseDeleteTool implements Tool {
     static ID = "glsp.delete-mouse";
     readonly id = MouseDeleteTool.ID;
 
-    protected deleteToolMouseListener: DeleteToolMouseListener = new DeleteToolMouseListener();
+    protected deleteToolMouseListener: DeleteToolMouseListener = new DeleteToolMouseListener(this);
 
     constructor(@inject(MouseTool) protected readonly mouseTool: MouseTool,
         @inject(GLSP_TYPES.IFeedbackActionDispatcher) protected feedbackDispatcher: IFeedbackActionDispatcher) { }
@@ -94,12 +97,17 @@ export class MouseDeleteTool implements Tool {
         this.mouseTool.deregister(this.deleteToolMouseListener);
         this.feedbackDispatcher.registerFeedback(this, [new ApplyCursorCSSFeedbackAction()]);
     }
+
+    dispatchFeedback(actions: Action[]) {
+        this.feedbackDispatcher.registerFeedback(this, actions);
+    }
 }
 
 @injectable()
 export class DeleteToolMouseListener extends DragAwareMouseListener {
     private toDelete?: SModelElement
 
+    constructor(protected tool: MouseDeleteTool) { super() }
     nonDraggingMouseUp(target: SModelElement, event: MouseEvent): Action[] {
         const result: Action[] = [];
         if (this.toDelete) {
@@ -116,9 +124,9 @@ export class DeleteToolMouseListener extends DragAwareMouseListener {
         if (this.toDelete !== currentTarget) {
             this.toDelete = currentTarget;
             if (this.toDelete || target instanceof SModelRoot) {
-                return [new ApplyCursorCSSFeedbackAction(CursorCSS.ELEMENT_DELETION)]
+                this.tool.dispatchFeedback([new ApplyCursorCSSFeedbackAction(CursorCSS.ELEMENT_DELETION)]);
             }
-            return [new ApplyCursorCSSFeedbackAction(CursorCSS.OPERATION_NOT_ALLOWED)]
+            this.tool.dispatchFeedback([new ApplyCursorCSSFeedbackAction(CursorCSS.OPERATION_NOT_ALLOWED)]);
         }
         return [];
     }

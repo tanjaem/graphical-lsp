@@ -13,22 +13,44 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { inject, injectable, optional } from "inversify";
-import {
-    Action, AnchorComputerRegistry, Connectable, EdgeRouterRegistry, findParentByFeature, isConnectable, MouseTool, //
-    SModelElement, SRoutableElement, SRoutingHandle, Tool
-} from "sprotty/lib";
-import { GLSP_TYPES } from "../../types";
-import { ReconnectConnectionOperationAction, RerouteConnectionOperationAction } from "../reconnect/action-definitions";
-import { isReconnectHandle, isRoutable, isRoutingHandle, isSourceRoutingHandle, isTargetRoutingHandle, SReconnectHandle } from "../reconnect/model";
-import { SelectionTracker } from "../select/selection-tracker";
+import { Action } from "sprotty/lib";
+import { AnchorComputerRegistry } from "sprotty/lib";
+import { ApplyCursorCSSFeedbackAction } from "../tool-feedback/cursor-feedback";
+import { Connectable } from "sprotty/lib";
+import { CursorCSS } from "../tool-feedback/cursor-feedback";
+import { DrawEdgeFeedbackAction } from "../tool-feedback/creation-tool-feedback";
+import { DrawFeebackEdgeSourceAction } from "../tool-feedback/edge-edit-tool-feedback";
+import { EdgeRouterRegistry } from "sprotty/lib";
+import { FeedbackEdgeRouteMovingMouseListener } from "../tool-feedback/edge-edit-tool-feedback";
+import { FeedbackEdgeSourceMovingMouseListener } from "../tool-feedback/edge-edit-tool-feedback";
+import { FeedbackEdgeTargetMovingMouseListener } from "../tool-feedback/edge-edit-tool-feedback";
 import { FeedbackMoveMouseListener } from "../tool-feedback/change-bounds-tool-feedback";
-import { feedbackEdgeId } from "../tool-feedback/creation-tool-feedback";
-import {
-    FeedbackEdgeRouteMovingMouseListener, FeedbackEdgeSourceMovingMouseListener, FeedbackEdgeTargetMovingMouseListener, HideEdgeReconnectHandlesFeedbackAction, //
-    HideEdgeReconnectToolFeedbackAction, ShowEdgeReconnectHandlesFeedbackAction, ShowEdgeReconnectSelectSourceFeedbackAction, ShowEdgeReconnectSelectTargetFeedbackAction
-} from "../tool-feedback/edge-edit-tool-feedback";
+import { GLSP_TYPES } from "../../types";
+import { HideEdgeReconnectHandlesFeedbackAction } from "../tool-feedback/edge-edit-tool-feedback";
 import { IFeedbackActionDispatcher } from "../tool-feedback/feedback-action-dispatcher";
+import { MouseTool } from "sprotty/lib";
+import { ReconnectConnectionOperationAction } from "../reconnect/action-definitions";
+import { RemoveEdgeFeedbackAction } from "../tool-feedback/creation-tool-feedback";
+import { RerouteConnectionOperationAction } from "../reconnect/action-definitions";
+import { SelectionTracker } from "../select/selection-tracker";
+import { ShowEdgeReconnectHandlesFeedbackAction } from "../tool-feedback/edge-edit-tool-feedback";
+import { SModelElement } from "sprotty/lib";
+import { SReconnectHandle } from "../reconnect/model";
+import { SRoutableElement } from "sprotty/lib";
+import { SRoutingHandle } from "sprotty/lib";
+import { Tool } from "sprotty/lib";
+
+import { feedbackEdgeId } from "../tool-feedback/creation-tool-feedback";
+import { findParentByFeature } from "sprotty/lib";
+import { inject } from "inversify";
+import { injectable } from "inversify";
+import { isConnectable } from "sprotty/lib";
+import { isReconnectHandle } from "../reconnect/model";
+import { isRoutable } from "../reconnect/model";
+import { isRoutingHandle } from "../reconnect/model";
+import { isSourceRoutingHandle } from "../reconnect/model";
+import { isTargetRoutingHandle } from "../reconnect/model";
+import { optional } from "inversify";
 
 @injectable()
 export class EdgeEditTool implements Tool {
@@ -110,10 +132,14 @@ class ReconnectEdgeListener extends SelectionTracker {
     private setReconnectHandleSelected(edge: SRoutableElement, reconnectHandle: SReconnectHandle) {
         if (this.edge && this.edge.target && this.edge.source) {
             if (isSourceRoutingHandle(edge, reconnectHandle)) {
-                this.tool.dispatchFeedback([new HideEdgeReconnectHandlesFeedbackAction(), new ShowEdgeReconnectSelectSourceFeedbackAction(this.edge.type, this.edge.target.id)]);
+                this.tool.dispatchFeedback([new HideEdgeReconnectHandlesFeedbackAction(),
+                new ApplyCursorCSSFeedbackAction(CursorCSS.EDGE_RECONNECT),
+                new DrawFeebackEdgeSourceAction(this.edge.type, this.edge.targetId)]);
                 this.reconnectMode = "NEW_SOURCE";
             } else if (isTargetRoutingHandle(edge, reconnectHandle)) {
-                this.tool.dispatchFeedback([new HideEdgeReconnectHandlesFeedbackAction(), new ShowEdgeReconnectSelectTargetFeedbackAction(this.edge.type, this.edge.source.id)]);
+                this.tool.dispatchFeedback([new HideEdgeReconnectHandlesFeedbackAction(),
+                new ApplyCursorCSSFeedbackAction(CursorCSS.EDGE_CREATION_TARGET),
+                new DrawEdgeFeedbackAction(this.edge.type, this.edge.sourceId)]);
                 this.reconnectMode = "NEW_TARGET";
             }
         }
@@ -222,6 +248,6 @@ class ReconnectEdgeListener extends SelectionTracker {
 
     private resetFeedback() {
         this.tool.dispatchFeedback([new HideEdgeReconnectHandlesFeedbackAction()]);
-        this.tool.dispatchFeedback([new HideEdgeReconnectToolFeedbackAction()]);
+        this.tool.dispatchFeedback([new ApplyCursorCSSFeedbackAction(), new RemoveEdgeFeedbackAction()]);
     }
 }
